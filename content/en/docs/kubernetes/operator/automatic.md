@@ -5,7 +5,7 @@ weight: 11
 description:
   An implementation of auto-instrumentation using the OpenTelemetry Operator.
 # prettier-ignore
-cSpell:ignore: autoinstrumentation GRPCNETCLIENT k8sattributesprocessor otelinst otlpreceiver PTRACE REDISCALA Werkzeug
+cSpell:ignore: GRPCNETCLIENT k8sattributesprocessor otelinst otlpreceiver PTRACE REDISCALA Werkzeug
 ---
 
 The OpenTelemetry Operator supports injecting and configuring
@@ -178,8 +178,7 @@ spec:
 
 #### Learn more {#dotnet-learn-more}
 
-For more details, see
-[.NET Auto Instrumentation docs](/docs/languages/net/automatic/).
+For more details, see [.NET Auto Instrumentation docs](/docs/zero-code/net/).
 
 ### Java
 
@@ -213,7 +212,7 @@ Therefore, the example uses `http://demo-collector:4318`, which connects to the
 #### Excluding auto-instrumentation {#java-excluding-auto-instrumentation}
 
 By default, the Java auto-instrumentation ships with
-[many instrumentation libraries](/docs/languages/java/automatic/#supported-libraries-frameworks-application-services-and-jvms).
+[many instrumentation libraries](/docs/zero-code/java/agent/getting-started/#supported-libraries-frameworks-application-services-and-jvms).
 This makes instrumentation easy, but could result in too much or unwanted data.
 If there are any libraries you do not want to use you can set the
 `OTEL_INSTRUMENTATION_[NAME]_ENABLED=false` where `[NAME]` is the name of the
@@ -222,7 +221,7 @@ the default libraries by setting
 `OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED=false` and then use
 `OTEL_INSTRUMENTATION_[NAME]_ENABLED=true` where `[NAME]` is the name of the
 library. For more details, see
-[Suppressing specific auto-instrumentation](/docs/languages/java/automatic/configuration/#suppressing-specific-auto-instrumentation).
+[Suppressing specific instrumentation](/docs/zero-code/java/agent/disable/).
 
 ```yaml
 apiVersion: opentelemetry.io/v1alpha1
@@ -249,7 +248,7 @@ spec:
 #### Learn more {#java-learn-more}
 
 For more details, see
-[Java agent Configuration](/docs/languages/java/automatic/configuration/).
+[Java agent Configuration](/docs/zero-code/java/agent/configuration/).
 
 ### Node.js
 
@@ -280,14 +279,14 @@ must be able to receive OTLP over `grpc`. Therefore, the example uses
 `http://demo-collector:4317`, which connects to the `grpc` port of the
 `otlpreceiver` of the Collector created in the previous step.
 
-#### Excluding auto-instrumentation {#js-excluding-auto-instrumentation}
+#### Excluding instrumentation libraries {#js-excluding-instrumentation-libraries}
 
-By default, the Node.js auto-instrumentation has all the instrumentation
+By default, the Node.js zero-code instrumentation has all the instrumentation
 libraries enabled.
 
-To enable only specific instrumentations you can use the
+To enable only specific instrumentation libraries you can use the
 `OTEL_NODE_ENABLED_INSTRUMENTATIONS` environment variable as documented in the
-[Node.js auto-instrumentation documentation](/docs/languages/js/automatic/configuration/#excluding-auto-instrumentation).
+[Node.js zero-code instrumentation documentation](/docs/zero-code/js/configuration/#excluding-instrumentation-libraries).
 
 ```yaml
 apiVersion: opentelemetry.io/v1alpha1
@@ -300,6 +299,32 @@ spec:
       - name: OTEL_NODE_ENABLED_INSTRUMENTATIONS
         value: http,nestjs-core # comma-separated list of the instrumentation package names without the `@opentelemetry/instrumentation-` prefix.
 ```
+
+To keep all default libraries and disable only specific instrumentation
+libraries you can use the `OTEL_NODE_DISABLED_INSTRUMENTATIONS` environment
+variable. For details, see
+[Excluding instrumentation libraries](/docs/zero-code/js/configuration/#excluding-instrumentation-libraries).
+
+```yaml
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+# ... other fields skipped from this example
+spec:
+  # ... other fields skipped from this example
+  nodejs:
+    env:
+      - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS
+        value: fs,grpc # comma-separated list of the instrumentation package names without the `@opentelemetry/instrumentation-` prefix.
+```
+
+{{% alert title="Note" color="info" %}}
+
+If both environment variables are set, `OTEL_NODE_ENABLED_INSTRUMENTATIONS` is
+applied first, and then `OTEL_NODE_DISABLED_INSTRUMENTATIONS` is applied to that
+list. Therefore, if the same instrumentation is included in both lists, that
+instrumentation will be disabled.
+
+{{% /alert %}}
 
 #### Learn more {#js-learn-more}
 
@@ -336,17 +361,16 @@ time). This means that the configured endpoint must be able to receive OTLP over
 will connect to the `http` port of the `otlpreceiver` of the Collector created
 in the previous step.
 
-> As of operator v0.67.0, the Instrumentation resource automatically sets
-> `OTEL_EXPORTER_OTLP_TRACES_PROTOCOL` and `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`
-> to `http/protobuf` for Python services. If you use an older version of the
-> Operator you **MUST** set these env variables to `http/protobuf`, or Python
-> auto-instrumentation will not work.
+> As of operator v0.108.0, the Instrumentation resource automatically sets
+> `OTEL_EXPORTER_OTLP_PROTOCOL` to `http/protobuf` for Python services. If you
+> use an older version of the Operator you **MUST** set this env variable to
+> `http/protobuf`, or Python auto-instrumentation will not work.
 
 #### Auto-instrumenting Python logs
 
 By default, Python logs auto-instrumentation is disabled. If you would like to
-enable this feature, you must to set the `OTEL_LOGS_EXPORTER` and
-`OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED` environment variables as
+enable this feature, you must to set
+`OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED` environment variable as
 follows:
 
 ```yaml
@@ -364,14 +388,12 @@ spec:
     - baggage
   python:
     env:
-      - name: OTEL_LOGS_EXPORTER
-        value: otlp_proto_http
       - name: OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED
         value: 'true'
 ```
 
-> Note that `OTEL_LOGS_EXPORTER` must be explicitly set to `otlp_proto_http`,
-> otherwise it defaults to gRPC.
+> As of operator v0.111.0 setting `OTEL_LOGS_EXPORTER` to `otlp` is not required
+> anymore.
 
 #### Excluding auto-instrumentation {#python-excluding-auto-instrumentation}
 
@@ -403,9 +425,16 @@ spec:
           instrumentation>
 ```
 
+See the
+[Python agent configuration docs](/docs/zero-code/python/configuration/#disabling-specific-instrumentations)
+for more details.
+
 #### Learn more {#python-learn-more}
 
-[See the Python agent Configuration docs for more details.](/docs/languages/python/automatic/configuration/#disabling-specific-instrumentations)
+For Python-specific quirks, see
+[Python OpenTelemetry Operator docs](/docs/zero-code/python/operator/#python-specific-topics)
+and the
+[Python agent configuration docs](/docs/zero-code/python/configuration/).
 
 ### Go
 
@@ -502,11 +531,20 @@ permissions:
 
 ```yaml
 securityContext:
-  capabilities:
-    add:
-      - SYS_PTRACE
   privileged: true
   runAsUser: 0
+```
+
+### Auto-instrumenting a Python musl based container {#annotations-python-musl}
+
+Since operator v0.113.0 Python auto-instrumentation also honors an annotation
+that will permit it to run it on images with a different C library than glibc.
+
+```sh
+# for Linux glibc based images, this is the default value and can be omitted
+instrumentation.opentelemetry.io/otel-python-platform: "glibc"
+# for Linux musl based images
+instrumentation.opentelemetry.io/otel-python-platform: "musl"
 ```
 
 ## Troubleshooting

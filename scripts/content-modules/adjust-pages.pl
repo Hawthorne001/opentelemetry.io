@@ -18,13 +18,14 @@ my $semconvSpecRepoUrl = 'https://github.com/open-telemetry/semantic-conventions
 my $semConvRef = "$otelSpecRepoUrl/blob/main/semantic_conventions/README.md";
 my $specBasePath = '/docs/specs';
 my %versions = qw(
-  spec: 1.32.0
-  otlp: 1.3.0
-  semconv: 1.25.0
+  spec: 1.40.0
+  otlp: 1.5.0
+  semconv: 1.29.0
 );
 my $otelSpecVers = $versions{'spec:'};
 my $otlpSpecVers = $versions{'otlp:'};
 my $semconvVers = $versions{'semconv:'};
+my %patchMsgCount;
 
 sub printTitleAndFrontMatter() {
   print "---\n";
@@ -43,6 +44,13 @@ sub printTitleAndFrontMatter() {
     # $frontMatterFromFile =~ s/body_class: .*/$& td-page--draft/;
     # $frontMatterFromFile =~ s/cascade:\n/$&  draft: true\n/;
   }
+  # Sample front-matter patch:
+  #
+  # } elsif ($ARGV =~ /otel\/specification\/logs\/api.md$/) {
+  #   $frontMatterFromFile .= "linkTitle: API\naliases: [bridge-api]\n";
+  #   printPatchInfoIf("2024-12-01-bridge-api", $otelSpecVers ne "1.39.0");
+  # }
+
   my $titleMaybeQuoted = ($title =~ ':') ? "\"$title\"" : $title;
   print "title: $titleMaybeQuoted\n" if $frontMatterFromFile !~ /title: /;
   if ($title =~ /^OpenTelemetry (Protocol )?(.*)/) {
@@ -55,6 +63,12 @@ sub printTitleAndFrontMatter() {
   print "linkTitle: $linkTitle\n" if $linkTitle and $frontMatterFromFile !~ /linkTitle: /;
   print "$frontMatterFromFile" if $frontMatterFromFile;
   print "---\n";
+}
+
+sub printPatchInfoIf($$) {
+  my ($patchID, $specVersTest) = @_;
+  print STDOUT "INFO [$patchID]: $0: remove obsolete patch code now that OTel spec has been updated.\n"
+    if $specVersTest && !$patchMsgCount{$patchID}++;
 }
 
 # main
@@ -96,13 +110,26 @@ while(<>) {
     s|(\]\()/docs/|$1$specBasePath/semconv/|g;
     s|(\]:\s*)/docs/|$1$specBasePath/semconv/|;
 
-    # TODO: drop after fix of https://github.com/open-telemetry/semantic-conventions/issues/419
+    s|\((/model/.*?)\)|($semconvSpecRepoUrl/tree/v$semconvVers/$1)|g;
+
+    # TODO: drop after fix of https://github.com/open-telemetry/semantic-conventions/pull/1316
     s|#instrument-advice\b|#instrument-advisory-parameters|g;
-    # TODO: drop after fix of https://github.com/open-telemetry/semantic-conventions/pull/883
-    s|(\]\(process.md)#process(\))|$1$2|g;
+
+    # TODO: drop after fix of https://github.com/open-telemetry/semantic-conventions/issues/1313
+    s|(/database/database-spans\.md)#batch-operations|$1|g;
+    s|(/messaging/messaging-spans\.md)#common-messaging-operations|$1|g;
   }
 
+
   # SPECIFICATION custom processing
+
+  # TODO: drop the entire if statement patch code when OTel spec vers contains
+  # https://github.com/open-telemetry/opentelemetry-specification/issues/4338,
+  # which should be vers > 1.40.0.
+  if ($ARGV =~ /otel\/specification\/logs/) {
+    s|(/data-model.md/?)#event-name\b|$1#field-eventname|g;
+    printPatchInfoIf("2024-12-13-event-name", $otelSpecVers ne "1.40.0");
+  }
 
   s|\(https://github.com/open-telemetry/opentelemetry-specification\)|($specBasePath/otel/)|;
   s|(\]\()/specification/|$1$specBasePath/otel/)|;
@@ -122,21 +149,15 @@ while(<>) {
   # Images
   s|(\.\./)?internal(/img/[-\w]+\.png)|$2|g;
   s|(\]\()(img/.*?\))|$1../$2|g if $ARGV !~ /(logs|schemas)._index/ && $ARGV !~ /otlp\/docs/;
-  s|(\]\()([^)]+\.png\))|$1../$2|g if $ARGV =~ /\/tmp\/semconv\/docs\/general\/attributes/;
-  s|(\]\()([^)]+\.png\))|$1../$2|g if $ARGV =~ /\/tmp\/semconv\/docs\/http\/http-spans/;
-
-  # Fix links that are to the title of the .md page
-  # TODO: fix these in the spec
-  s|(/context/api-propagators.md)#propagators-api|$1|g;
-  s|(/semantic_conventions/faas.md)#function-as-a-service|$1|g;
-  s|(/resource/sdk.md)#resource-sdk|$1|g;
+  s|(\]\()([^)]+\.png\))|$1../$2|g if $ARGV =~ /\btmp\/semconv\/docs\/general\/attributes/;
+  s|(\]\()([^)]+\.png\))|$1../$2|g if $ARGV =~ /\btmp\/semconv\/docs\/http\/http-spans/;
 
   s|\.\.\/README.md\b|$otelSpecRepoUrl/|g if $ARGV =~ /specification._index/;
   s|\.\.\/README.md\b|..| if $ARGV =~ /specification.library-guidelines.md/;
 
-  s|\.\./(opentelemetry/proto/?.*)|$otlpSpecRepoUrl/tree/v$otlpSpecVers/$1|g if $ARGV =~ /\/tmp\/otlp/;
-  s|\.\./README.md\b|$otlpSpecRepoUrl/|g if $ARGV =~ /\/tmp\/otlp/;
-  s|\.\./examples/README.md\b|$otlpSpecRepoUrl/tree/v$otlpSpecVers/examples/|g if $ARGV =~ /\/tmp\/otlp/;
+  s|\.\./(opentelemetry/proto/?.*)|$otlpSpecRepoUrl/tree/v$otlpSpecVers/$1|g if $ARGV =~ /\btmp\/otlp/;
+  s|\.\./README.md\b|$otlpSpecRepoUrl/|g if $ARGV =~ /\btmp\/otlp/;
+  s|\.\./examples/README.md\b|$otlpSpecRepoUrl/tree/v$otlpSpecVers/examples/|g if $ARGV =~ /\btmp\/otlp/;
 
   s|\bREADME.md\b|_index.md|g if $ARGV !~ /otel\/specification\/protocol\/_index.md/;
 
@@ -145,14 +166,19 @@ while(<>) {
   s|(\.\.\/)+(supplementary-guidelines\/compatibility\/[^)]+)|$otelSpecRepoUrl/tree/v$otelSpecVers/$2|g;
 
   # Rewrite inline links
-  if ($ARGV =~ /\/tmp\/opamp/) {
+  if ($ARGV =~ /\btmp\/opamp/) {
     s|\]\(([^:\)]*?)\.md((#.*?)?)\)|]($1/$2)|g;
   } else {
     s|\]\(([^:\)]*?\.md(#.*?)?)\)|]({{% relref "$1" %}})|g;
   }
 
-  # Rewrite link defs
-  s|^(\[[^\]]+\]:\s*)([^:\s]*)(\s*(\(.*\))?)$|$1\{{% relref "$2" %}}$3|g;
+  # Rewrite link defs to local pages such as the following:
+  #
+  # [specification]: overview.md
+  # [faas]: some-path/faas-spans.md (FaaS trace conventions)
+  #
+  # The subregex `[:\s]+` excludes external URLs (because they contain a colon after the protocol)
+  s|^(\[[^\]]+\]:\s*)([^:\s]+)(\s*(\(.*\))?)$|$1\{{% relref "$2" %}}$3|g;
 
   # Make website-local page references local:
   s|https://opentelemetry.io/|/|g;

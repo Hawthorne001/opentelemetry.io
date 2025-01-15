@@ -26,9 +26,10 @@ get started.
 
 ## Step 1 - Install the builder
 
-The `ocb` binary is available as a downloadable asset from [OpenTelemetry
-Collector releases][releases]. You will find a list of assets named based on OS
-and chipset, so download the one that fits your configuration:
+The `ocb` binary is available as a downloadable asset from OpenTelemetry
+Collector [releases with `cmd/builder` tags][tags]. You will find a list of
+assets named based on OS and chipset, so download the one that fits your
+configuration:
 
 {{< tabpane text=true >}}
 
@@ -36,7 +37,7 @@ and chipset, so download the one that fits your configuration:
 
 ```sh
 curl --proto '=https' --tlsv1.2 -fL -o ocb \
-https://github.com/open-telemetry/opentelemetry-collector/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_linux_amd64
+https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_linux_amd64
 chmod +x ocb
 ```
 
@@ -44,7 +45,7 @@ chmod +x ocb
 
 ```sh
 curl --proto '=https' --tlsv1.2 -fL -o ocb \
-https://github.com/open-telemetry/opentelemetry-collector/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_linux_arm64
+https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_linux_arm64
 chmod +x ocb
 ```
 
@@ -52,7 +53,7 @@ chmod +x ocb
 
 ```sh
 curl --proto '=https' --tlsv1.2 -fL -o ocb \
-https://github.com/open-telemetry/opentelemetry-collector/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_linux_ppc64le
+https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_linux_ppc64le
 chmod +x ocb
 ```
 
@@ -60,7 +61,7 @@ chmod +x ocb
 
 ```sh
 curl --proto '=https' --tlsv1.2 -fL -o ocb \
-https://github.com/open-telemetry/opentelemetry-collector/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_darwin_amd64
+https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_darwin_amd64
 chmod +x ocb
 ```
 
@@ -68,14 +69,14 @@ chmod +x ocb
 
 ```sh
 curl --proto '=https' --tlsv1.2 -fL -o ocb \
-https://github.com/open-telemetry/opentelemetry-collector/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_darwin_arm64
+https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_darwin_arm64
 chmod +x ocb
 ```
 
 {{% /tab %}} {{% tab "Windows (AMD 64)" %}}
 
 ```sh
-Invoke-WebRequest -Uri "https://github.com/open-telemetry/opentelemetry-collector/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_windows_amd64.exe" -OutFile "ocb.exe"
+Invoke-WebRequest -Uri "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/cmd%2Fbuilder%2F{{% version-from-registry collector-builder %}}/ocb_{{% version-from-registry collector-builder noPrefix %}}_windows_amd64.exe" -OutFile "ocb.exe"
 Unblock-File -Path "ocb.exe"
 ```
 
@@ -119,13 +120,12 @@ the development and testing of components.
 Go ahead and create a manifest file named `builder-config.yaml` with the
 following content:
 
-> builder-config.yaml
-
 ```yaml
 dist:
   name: otelcol-dev
   description: Basic OTel Collector distribution for Developers
   output_path: ./otelcol-dev
+  otelcol_version: 0.114.0
 ```
 
 Now you need to add the modules representing the components you want to be
@@ -142,8 +142,6 @@ collector distribution:
 
 The `builder-config.yaml` manifest file will look like this after adding the
 components:
-
-> builder-config.yaml
 
 <!-- prettier-ignore -->
 ```yaml
@@ -167,7 +165,23 @@ processors:
 receivers:
   - gomod:
       go.opentelemetry.io/collector/receiver/otlpreceiver {{% version-from-registry collector-receiver-otlp %}}
+
+providers:
+  - gomod: go.opentelemetry.io/collector/confmap/provider/envprovider v1.18.0
+  - gomod: go.opentelemetry.io/collector/confmap/provider/fileprovider v1.18.0
+  - gomod: go.opentelemetry.io/collector/confmap/provider/httpprovider v1.18.0
+  - gomod: go.opentelemetry.io/collector/confmap/provider/httpsprovider v1.18.0
+  - gomod: go.opentelemetry.io/collector/confmap/provider/yamlprovider v1.18.0
 ```
+
+{{% alert color="primary" title="Tip" %}}
+
+For a list of components that you can add to your custom collector, see the
+[OpenTelemetry Registry](/ecosystem/registry/?language=collector). Note that
+registry entries provide the full name and version you need to add to your
+`builder-config.yaml`.
+
+{{% /alert %}}
 
 ## Step 3 - Generating the Code and Building your Collector's distribution
 
@@ -219,13 +233,10 @@ your components.
 Further reading:
 
 - [Building a Trace Receiver](/docs/collector/building/receiver)
-- [Building a Connector](/docs/collector/building/receiver)
+- [Building a Connector](/docs/collector/building/connector)
 
 [ocb]:
   https://github.com/open-telemetry/opentelemetry-collector/tree/main/cmd/builder
-[releases]:
-  https://github.com/open-telemetry/opentelemetry-collector/releases/tag/cmd%2Fbuilder%2F{{%
-
-version-from-registry collector-builder %}}
+[tags]: https://github.com/open-telemetry/opentelemetry-collector-releases/tags
 
 [^1]: Prior to v0.86.0 use the `loggingexporter` instead of `debugexporter`.

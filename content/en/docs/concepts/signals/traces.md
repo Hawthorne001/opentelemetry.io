@@ -1,8 +1,8 @@
 ---
 title: Traces
 weight: 1
+description: The path of a request through your application.
 cSpell:ignore: Guten
-description: Understand the full path through your distributed application.
 ---
 
 **Traces** give us the big picture of what happens when a request is made to an
@@ -26,8 +26,8 @@ verbose.
 {
   "name": "hello",
   "context": {
-    "trace_id": "0x5b8aa5a2d2c872e8321cf37308d69df2",
-    "span_id": "0x051581bf3cb55c13"
+    "trace_id": "5b8aa5a2d2c872e8321cf37308d69df2",
+    "span_id": "051581bf3cb55c13"
   },
   "parent_id": null,
   "start_time": "2022-04-29T18:52:58.114201Z",
@@ -57,10 +57,10 @@ Note that it has a `trace_id` field indicating the trace, but has no
 {
   "name": "hello-greetings",
   "context": {
-    "trace_id": "0x5b8aa5a2d2c872e8321cf37308d69df2",
-    "span_id": "0x5fb397be34d26b51"
+    "trace_id": "5b8aa5a2d2c872e8321cf37308d69df2",
+    "span_id": "5fb397be34d26b51"
   },
-  "parent_id": "0x051581bf3cb55c13",
+  "parent_id": "051581bf3cb55c13",
   "start_time": "2022-04-29T18:52:58.114304Z",
   "end_time": "2022-04-29T22:52:58.114561Z",
   "attributes": {
@@ -96,10 +96,10 @@ that matches the `span_id` of the `hello` span.
 {
   "name": "hello-salutations",
   "context": {
-    "trace_id": "0x5b8aa5a2d2c872e8321cf37308d69df2",
-    "span_id": "0x93564f51e1abe1c2"
+    "trace_id": "5b8aa5a2d2c872e8321cf37308d69df2",
+    "span_id": "93564f51e1abe1c2"
   },
-  "parent_id": "0x051581bf3cb55c13",
+  "parent_id": "051581bf3cb55c13",
   "start_time": "2022-04-29T18:52:58.114492Z",
   "end_time": "2022-04-29T18:52:58.114631Z",
   "attributes": {
@@ -118,7 +118,7 @@ that matches the `span_id` of the `hello` span.
 ```
 
 This span represents the third operation in this trace and, like the previous
-one, it's a child of the 'hello' Span. That also makes it a sibling of the
+one, it's a child of the `hello` span. That also makes it a sibling of the
 `hello-greetings` span.
 
 These three blocks of JSON all share the same `trace_id`, and the `parent_id`
@@ -311,6 +311,9 @@ trace. Now, they are causally associated with one another.
 
 Links are optional but serve as a good way to associate trace spans with one
 another.
+
+For more information regarding Span Links, see
+[Link](/docs/specs/otel/trace/api/#link).
 
 ### Span Status
 

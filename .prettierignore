@@ -7,6 +7,11 @@
 !/layouts/shortcodes
 /layouts/shortcodes/*
 !/layouts/shortcodes/docs
+!/layouts/shortcodes/es
+!/layouts/shortcodes/pt
+
+/content/ja
+/content/zh
 
 # Ignore content-modules except for published Community pages
 

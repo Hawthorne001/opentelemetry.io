@@ -8,8 +8,8 @@ filters:
     enablingComment: prettier-ignore-end
   allowlist:
     allow:
-      # Don't check registry .yml file fields for language, repo and tags:
-      - '/^\s*(?:language|repo|name|docs): .*$/m'
+      # Don't check registry .yml file fields for language, repo, url and tags:
+      - '/^\s*(?:language|repo|name|docs|url|website): .*$/m'
       - /^(?:tags):(\s*-.+$)*/m
       # Hugo template syntax:
       - /{{.*?}}/
@@ -115,7 +115,8 @@ rules:
       - ['3rd[- ]party', third-party]
       - ['auto[- ]c(onfigur)(es?|ations?)', 'autoc$1$2'] # cspell:ignore autoc ations onfigur
       - ['back[- ]end(s)?', 'backend$1']
-      - ['bugfix', 'bug fix']
+      - [bugfix, bug fix]
+      - [byte code, bytecode]
       - [cpp, C++]
       - # dotnet|.net -> .NET, but NOT for strings like:
         # - File extension: file.net
@@ -135,6 +136,7 @@ rules:
         - '(?<![.-])java\b(?![.])'
         - Java
       - ['java[- ]?agent', Java agent]
+      - ['java ?doc(s)?', 'Javadoc$1']
       - [mac ?os, macOS]
       - ['meta[- ]data', metadata]
       - [nd-?json, NDJSON]
@@ -157,3 +159,6 @@ rules:
       - ['screen[- ]shot(s)?', screenshot$1]
       - ['time[- ]stamp(s)?', timestamp$1]
       - ["uid['’]?(s)?", UID$1]
+      # Enable the following to find and replace "instrumentation module/package" with "instrumentation library":
+      # - ["(auto(matic)?[- ])?instrumentation (module|package)", "instrumentation library"]
+      # - ["(auto(matic)?[- ])?instrumentation (modules|packages)", "instrumentation libraries"]

@@ -12,11 +12,16 @@ Some organizations provide a [distribution](/ecosystem/distributions/) (of
 customized OpenTelemetry components), that provides additional capabilities or
 for improved ease of use.
 
+Open Source (OSS) refers to a vendor who has an observability product that is
+[open source](https://opensource.org/osd). The vendor may still have other
+products that are closed source, such as a SaaS offering that hosts an open
+source product for their customers.
+
 {{% ecosystem/vendor-table %}}
 
 ## Add your organization
 
-To have your organization listed, submit a PR with an entry added to the
+To have your organization listed, [submit a PR] with an entry added to the
 [vendors list](https://github.com/open-telemetry/opentelemetry.io/tree/main/data/ecosystem/vendors.yaml).
 The entry should include the following:
 
@@ -37,3 +42,5 @@ you do not provide any kind of services around OpenTelemetry, see
 
 If you provide a library, service, or app that is made observable through
 OpenTelemetry, see [Integrations](/ecosystem/integrations).
+
+[submit a PR]: /docs/contributing/pull-requests/
