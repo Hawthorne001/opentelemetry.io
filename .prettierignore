@@ -7,6 +7,14 @@
 !/layouts/shortcodes
 /layouts/shortcodes/*
 !/layouts/shortcodes/docs
+!/layouts/shortcodes/es
+!/layouts/shortcodes/pt
+
+/content/en/blog/2019
+/content/en/blog/202[23]
+
+/content/ja
+/content/zh
 
 # Ignore content-modules except for published Community pages
 

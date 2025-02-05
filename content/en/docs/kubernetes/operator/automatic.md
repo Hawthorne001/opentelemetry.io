@@ -5,7 +5,7 @@ weight: 11
 description:
   An implementation of auto-instrumentation using the OpenTelemetry Operator.
 # prettier-ignore
-cSpell:ignore: autoinstrumentation GRPCNETCLIENT k8sattributesprocessor otelinst otlpreceiver PTRACE REDISCALA Werkzeug
+cSpell:ignore: GRPCNETCLIENT k8sattributesprocessor otelinst otlpreceiver REDISCALA
 ---
 
 The OpenTelemetry Operator supports injecting and configuring
@@ -178,8 +178,106 @@ spec:
 
 #### Learn more {#dotnet-learn-more}
 
-For more details, see
-[.NET Auto Instrumentation docs](/docs/languages/net/automatic/).
+For more details, see [.NET Auto Instrumentation docs](/docs/zero-code/net/).
+
+### Deno
+
+The following command creates a basic Instrumentation resource that is
+configured for instrumenting [Deno](https://deno.com) services.
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: demo-instrumentation
+spec:
+  env:
+    - name: OTEL_DENO
+      value: 'true'
+  exporter:
+    endpoint: http://demo-collector:4318
+  propagators:
+    - tracecontext
+    - baggage
+  sampler:
+    type: parentbased_traceidratio
+    argument: '1'
+EOF
+```
+
+Deno processes automatically export telemetry data to the configured endpoint
+when they are started with the `OTEL_DENO=true` environment variable. Therefore,
+the example specifies this environment variable in the `env` field of the
+Instrumentation resource, so it is set for all services that have env vars
+injected with this Instrumentation resource.
+
+By default, the Instrumentation resource that auto-instruments Deno services
+uses `otlp` with the `http/proto` protocol. This means that the configured
+endpoint must be able to receive OTLP over `http/proto`. Therefore, the example
+uses `http://demo-collector:4318`, which connects to the `http/proto` port of
+the `otlpreceiver` of the Collector created in the previous step.
+
+{{% alert title="Note" color="info" %}}
+
+[Deno's OpenTelemetry integration][deno-docs] is not yet stable. As a result all
+workloads that want to be instrumented with Deno must have the `--unstable-otel`
+flag set when starting the Deno process.
+
+[deno-docs]: https://docs.deno.com/runtime/fundamentals/open_telemetry/
+
+{{% /alert %}}
+
+#### Configuration options {#deno-configuration-options}
+
+By default, the Deno OpenTelemetry integration exports `console.log()` output
+as\
+[logs](/docs/concepts/signals/logs/), while still printing the logs to stdout /
+stderr. You can configure these alternative behaviors:
+
+- `OTEL_DENO_CONSOLE=replace`: only export `console.log()` output as logs; do
+  not print to stdout / stderr.
+- `OTEL_DENO_CONSOLE=ignore`: do not export `console.log()` output as logs; do
+  print to stdout / stderr.
+
+#### Learn more {#deno-learn-more}
+
+For more details, see Deno's [OpenTelemetry integration][deno-otel-docs]
+documentation.
+
+[deno-otel-docs]: https://docs.deno.com/runtime/fundamentals/open_telemetry/
+
+### Go
+
+The following command creates a basic Instrumentation resource that is
+configured specifically for instrumenting Go services.
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: demo-instrumentation
+spec:
+  exporter:
+    endpoint: http://demo-collector:4318
+  propagators:
+    - tracecontext
+    - baggage
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"
+EOF
+```
+
+By default, the Instrumentation resource that auto-instruments Go services uses
+`otlp` with the `http/protobuf` protocol. This means that the configured
+endpoint must be able to receive OTLP over `http/protobuf`. Therefore, the
+example uses `http://demo-collector:4318`, which connects to the `http/protobuf`
+port of the `otlpreceiver` of the Collector created in the previous step.
+
+The Go auto-instrumentation does not support disabling any instrumentation.
+[See the Go Auto-Instrumentation repository for more details.](https://github.com/open-telemetry/opentelemetry-go-instrumentation)
 
 ### Java
 
@@ -213,7 +311,7 @@ Therefore, the example uses `http://demo-collector:4318`, which connects to the
 #### Excluding auto-instrumentation {#java-excluding-auto-instrumentation}
 
 By default, the Java auto-instrumentation ships with
-[many instrumentation libraries](/docs/languages/java/automatic/#supported-libraries-frameworks-application-services-and-jvms).
+[many instrumentation libraries](/docs/zero-code/java/agent/getting-started/#supported-libraries-frameworks-application-services-and-jvms).
 This makes instrumentation easy, but could result in too much or unwanted data.
 If there are any libraries you do not want to use you can set the
 `OTEL_INSTRUMENTATION_[NAME]_ENABLED=false` where `[NAME]` is the name of the
@@ -222,7 +320,7 @@ the default libraries by setting
 `OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED=false` and then use
 `OTEL_INSTRUMENTATION_[NAME]_ENABLED=true` where `[NAME]` is the name of the
 library. For more details, see
-[Suppressing specific auto-instrumentation](/docs/languages/java/automatic/configuration/#suppressing-specific-auto-instrumentation).
+[Suppressing specific instrumentation](/docs/zero-code/java/agent/disable/).
 
 ```yaml
 apiVersion: opentelemetry.io/v1alpha1
@@ -249,7 +347,7 @@ spec:
 #### Learn more {#java-learn-more}
 
 For more details, see
-[Java agent Configuration](/docs/languages/java/automatic/configuration/).
+[Java agent Configuration](/docs/zero-code/java/agent/configuration/).
 
 ### Node.js
 
@@ -280,14 +378,14 @@ must be able to receive OTLP over `grpc`. Therefore, the example uses
 `http://demo-collector:4317`, which connects to the `grpc` port of the
 `otlpreceiver` of the Collector created in the previous step.
 
-#### Excluding auto-instrumentation {#js-excluding-auto-instrumentation}
+#### Excluding instrumentation libraries {#js-excluding-instrumentation-libraries}
 
-By default, the Node.js auto-instrumentation has all the instrumentation
+By default, the Node.js zero-code instrumentation has all the instrumentation
 libraries enabled.
 
-To enable only specific instrumentations you can use the
+To enable only specific instrumentation libraries you can use the
 `OTEL_NODE_ENABLED_INSTRUMENTATIONS` environment variable as documented in the
-[Node.js auto-instrumentation documentation](/docs/languages/js/automatic/configuration/#excluding-auto-instrumentation).
+[Node.js zero-code instrumentation documentation](/docs/zero-code/js/configuration/#excluding-instrumentation-libraries).
 
 ```yaml
 apiVersion: opentelemetry.io/v1alpha1
@@ -300,6 +398,32 @@ spec:
       - name: OTEL_NODE_ENABLED_INSTRUMENTATIONS
         value: http,nestjs-core # comma-separated list of the instrumentation package names without the `@opentelemetry/instrumentation-` prefix.
 ```
+
+To keep all default libraries and disable only specific instrumentation
+libraries you can use the `OTEL_NODE_DISABLED_INSTRUMENTATIONS` environment
+variable. For details, see
+[Excluding instrumentation libraries](/docs/zero-code/js/configuration/#excluding-instrumentation-libraries).
+
+```yaml
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+# ... other fields skipped from this example
+spec:
+  # ... other fields skipped from this example
+  nodejs:
+    env:
+      - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS
+        value: fs,grpc # comma-separated list of the instrumentation package names without the `@opentelemetry/instrumentation-` prefix.
+```
+
+{{% alert title="Note" color="info" %}}
+
+If both environment variables are set, `OTEL_NODE_ENABLED_INSTRUMENTATIONS` is
+applied first, and then `OTEL_NODE_DISABLED_INSTRUMENTATIONS` is applied to that
+list. Therefore, if the same instrumentation is included in both lists, that
+instrumentation will be disabled.
+
+{{% /alert %}}
 
 #### Learn more {#js-learn-more}
 
@@ -336,17 +460,16 @@ time). This means that the configured endpoint must be able to receive OTLP over
 will connect to the `http` port of the `otlpreceiver` of the Collector created
 in the previous step.
 
-> As of operator v0.67.0, the Instrumentation resource automatically sets
-> `OTEL_EXPORTER_OTLP_TRACES_PROTOCOL` and `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`
-> to `http/protobuf` for Python services. If you use an older version of the
-> Operator you **MUST** set these env variables to `http/protobuf`, or Python
-> auto-instrumentation will not work.
+> As of operator v0.108.0, the Instrumentation resource automatically sets
+> `OTEL_EXPORTER_OTLP_PROTOCOL` to `http/protobuf` for Python services. If you
+> use an older version of the Operator you **MUST** set this env variable to
+> `http/protobuf`, or Python auto-instrumentation will not work.
 
 #### Auto-instrumenting Python logs
 
 By default, Python logs auto-instrumentation is disabled. If you would like to
-enable this feature, you must to set the `OTEL_LOGS_EXPORTER` and
-`OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED` environment variables as
+enable this feature, you must to set
+`OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED` environment variable as
 follows:
 
 ```yaml
@@ -364,14 +487,12 @@ spec:
     - baggage
   python:
     env:
-      - name: OTEL_LOGS_EXPORTER
-        value: otlp_proto_http
       - name: OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED
         value: 'true'
 ```
 
-> Note that `OTEL_LOGS_EXPORTER` must be explicitly set to `otlp_proto_http`,
-> otherwise it defaults to gRPC.
+> As of operator v0.111.0 setting `OTEL_LOGS_EXPORTER` to `otlp` is not required
+> anymore.
 
 #### Excluding auto-instrumentation {#python-excluding-auto-instrumentation}
 
@@ -403,41 +524,16 @@ spec:
           instrumentation>
 ```
 
+See the
+[Python agent configuration docs](/docs/zero-code/python/configuration/#disabling-specific-instrumentations)
+for more details.
+
 #### Learn more {#python-learn-more}
 
-[See the Python agent Configuration docs for more details.](/docs/languages/python/automatic/configuration/#disabling-specific-instrumentations)
-
-### Go
-
-The following command creates a basic Instrumentation resource that is
-configured specifically for instrumenting Go services.
-
-```bash
-kubectl apply -f - <<EOF
-apiVersion: opentelemetry.io/v1alpha1
-kind: Instrumentation
-metadata:
-  name: demo-instrumentation
-spec:
-  exporter:
-    endpoint: http://demo-collector:4318
-  propagators:
-    - tracecontext
-    - baggage
-  sampler:
-    type: parentbased_traceidratio
-    argument: "1"
-EOF
-```
-
-By default, the Instrumentation resource that auto-instruments Go services uses
-`otlp` with the `http/protobuf` protocol. This means that the configured
-endpoint must be able to receive OTLP over `http/protobuf`. Therefore, the
-example uses `http://demo-collector:4318`, which connects to the `http/protobuf`
-port of the `otlpreceiver` of the Collector created in the previous step.
-
-The Go auto-instrumentation does not support disabling any instrumentation.
-[See the Go Auto-Instrumentation repository for more details.](https://github.com/open-telemetry/opentelemetry-go-instrumentation)
+For Python-specific quirks, see
+[Python OpenTelemetry Operator docs](/docs/zero-code/python/operator/#python-specific-topics)
+and the
+[Python agent configuration docs](/docs/zero-code/python/configuration/).
 
 ---
 
@@ -454,6 +550,7 @@ done by updating your service’s `spec.template.metadata.annotations` to includ
 a language-specific annotation:
 
 - .NET: `instrumentation.opentelemetry.io/inject-dotnet: "true"`
+- Deno: `instrumentation.opentelemetry.io/inject-sdk: "true"`
 - Go: `instrumentation.opentelemetry.io/inject-go: "true"`
 - Java: `instrumentation.opentelemetry.io/inject-java: "true"`
 - Node.js: `instrumentation.opentelemetry.io/inject-nodejs: "true"`
@@ -502,11 +599,20 @@ permissions:
 
 ```yaml
 securityContext:
-  capabilities:
-    add:
-      - SYS_PTRACE
   privileged: true
   runAsUser: 0
+```
+
+### Auto-instrumenting a Python musl based container {#annotations-python-musl}
+
+Since operator v0.113.0 Python auto-instrumentation also honors an annotation
+that will permit it to run it on images with a different C library than glibc.
+
+```sh
+# for Linux glibc based images, this is the default value and can be omitted
+instrumentation.opentelemetry.io/otel-python-platform: "glibc"
+# for Linux musl based images
+instrumentation.opentelemetry.io/otel-python-platform: "musl"
 ```
 
 ## Troubleshooting
@@ -643,10 +749,13 @@ auto-instrumentation annotation.
 
 Here are a few things to check for:
 
-- **Is the auto-instrumentation for the right language?** For example, when
-  instrumenting a Python application, make sure that the annotation doesn't
-  incorrectly say `instrumentation.opentelemetry.io/inject-java: "true"`
-  instead.
+- **Is the auto-instrumentation for the right language?**
+  - For example, when instrumenting a Python application, make sure that the
+    annotation doesn't incorrectly say
+    `instrumentation.opentelemetry.io/inject-java: "true"` instead.
+  - For **Deno**, make sure you are using the
+    `instrumentation.opentelemetry.io/inject-sdk: "true"` annotation, rather
+    than an annotation containing the string `deno`.
 - **Is the auto-instrumentation annotation in the correct location?** When
   defining a `Deployment`, annotations can be added in one of two locations:
   `spec.metadata.annotations`, and `spec.template.metadata.annotations`. The

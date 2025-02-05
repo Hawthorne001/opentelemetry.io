@@ -3,7 +3,7 @@ title: Exporters
 aliases: [exporting_data]
 weight: 50
 # prettier-ignore
-cSpell:ignore: otlpmetric otlpmetricgrpc otlpmetrichttp otlptrace otlptracegrpc otlptracehttp promhttp stdoutlog stdouttrace
+cSpell:ignore: otlplog otlploggrpc otlploghttp otlpmetric otlpmetricgrpc otlpmetrichttp otlptrace otlptracegrpc otlptracehttp promhttp stdoutlog stdouttrace
 ---
 
 {{% docs/languages/exporters/intro go %}}
@@ -76,9 +76,6 @@ To send trace data to an OTLP endpoint (like the [collector](/docs/collector) or
 Jaeger >= v1.35.0) you'll want to configure an OTLP exporter that sends to your
 endpoint.
 
-To learn more on how to use the OTLP HTTP exporter, try the
-[otel-collector example](https://github.com/open-telemetry/opentelemetry-go/tree/main/example/otel-collector)
-
 ### OTLP traces over HTTP
 
 [`go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp`](https://pkg.go.dev/go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp)
@@ -89,12 +86,14 @@ Here's how you can create an exporter with default configuration:
 
 ```go
 import (
+	"context"
+
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
 
 func newExporter(ctx context.Context) (trace.SpanExporter, error) {
-	return otlptracehttp.New(ctx, client)
+	return otlptracehttp.New(ctx)
 }
 ```
 
@@ -107,12 +106,14 @@ Here's how you can create an exporter with default configuration:
 
 ```go
 import (
+	"context"
+
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
 
 func newExporter(ctx context.Context) (trace.SpanExporter, error) {
-	return otlptracegrpc.New(ctx, client)
+	return otlptracegrpc.New(ctx)
 }
 ```
 
@@ -141,6 +142,8 @@ Here's how you can create an exporter with default configuration:
 
 ```go
 import (
+	"context"
+
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/sdk/metric"
 )
@@ -159,8 +162,10 @@ Here's how you can create an exporter with default configuration:
 
 ```go
 import (
+	"context"
+
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/metric"
 )
 
 func newExporter(ctx context.Context) (metric.Exporter, error) {
@@ -181,6 +186,8 @@ default configuration:
 
 ```go
 import (
+	"context"
+
 	"go.opentelemetry.io/otel/exporters/prometheus"
 	"go.opentelemetry.io/otel/sdk/metric"
 )
@@ -193,4 +200,45 @@ func newExporter(ctx context.Context) (metric.Reader, error) {
 ```
 
 To learn more on how to use the Prometheus exporter, try the
-[prometheus example](https://github.com/open-telemetry/opentelemetry-go/tree/main/example/prometheus)
+[prometheus example](https://github.com/open-telemetry/opentelemetry-go-contrib/tree/main/examples/prometheus)
+
+### OTLP logs over HTTP (Experimental)
+
+[`go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp`](https://pkg.go.dev/go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp)
+contains an implementation of OTLP logs exporter using HTTP with binary protobuf
+payloads.
+
+Here's how you can create an exporter with default configuration:
+
+```go
+import (
+	"context"
+
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
+	"go.opentelemetry.io/otel/sdk/log"
+)
+
+func newExporter(ctx context.Context) (log.Exporter, error) {
+	return otlploghttp.New(ctx)
+}
+```
+
+### OTLP logs over gRPC (Experimental)
+
+[`go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc`](https://pkg.go.dev/go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc)
+contains an implementation of OTLP logs exporter using gRPC.
+
+Here's how you can create an exporter with default configuration:
+
+```go
+import (
+	"context"
+
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
+	"go.opentelemetry.io/otel/sdk/log"
+)
+
+func newExporter(ctx context.Context) (log.Exporter, error) {
+	return otlploggrpc.New(ctx)
+}
+```

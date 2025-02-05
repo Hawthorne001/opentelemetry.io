@@ -262,7 +262,7 @@ encouraged, attribute `service.version`, which holds the version of the service
 API or implementation.
 
 Alternative methods exist for setting up resource attributes. For more
-information, see [Resources](/docs/languages/js/resources/).
+information, see [Resources](/docs/languages/php/resources/).
 
 #### Global Providers
 
@@ -404,7 +404,7 @@ class Dice {
 
     private function rollOnce() {
       $result = random_int(1, 6);
-      return $result
+      return $result;
     }
 }
 ```
@@ -690,7 +690,7 @@ See [Exporters](/docs/languages/php/exporters)
 OpenTelemetry can be used to measure and record different types of metrics from
 an application, which can then be
 [pushed](/docs/specs/otel/metrics/sdk/#push-metric-exporter) to a metrics
-service such as the OpenTelemetry collector:
+service such as the OpenTelemetry Collector:
 
 - counter
 - async counter

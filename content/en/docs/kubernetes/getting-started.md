@@ -156,6 +156,9 @@ The following `values.yaml` is what we'll use
 ```yaml
 mode: daemonset
 
+image:
+  repository: otel/opentelemetry-collector-k8s
+
 presets:
   # enables the k8sattributesprocessor and adds it to the traces, metrics, and logs pipelines
   kubernetesAttributes:
@@ -170,17 +173,17 @@ presets:
 ## If you want to send your data somewhere you need to
 ## configure an exporter, such as the otlpexporter
 # config:
-# exporters:
-#   otlp:
-#     endpoint: "<SOME BACKEND>"
-# service:
-#   pipelines:
-#     traces:
-#       exporters: [ otlp ]
-#     metrics:
-#       exporters: [ otlp ]
-#     logs:
-#       exporters: [ otlp ]
+#   exporters:
+#     otlp:
+#       endpoint: "<SOME BACKEND>"
+#   service:
+#     pipelines:
+#       traces:
+#         exporters: [ otlp ]
+#       metrics:
+#         exporters: [ otlp ]
+#       logs:
+#         exporters: [ otlp ]
 ```
 
 To use this `values.yaml` with the chart, save it to your preferred file
@@ -239,6 +242,9 @@ The following `values.yaml` is what we'll use:
 
 ```yaml
 mode: deployment
+
+image:
+  repository: otel/opentelemetry-collector-k8s
 
 # We only want one of these collectors - any more and we'd produce duplicate data
 replicaCount: 1

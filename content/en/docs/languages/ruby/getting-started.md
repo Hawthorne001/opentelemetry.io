@@ -2,9 +2,8 @@
 title: Getting Started
 description: Get telemetry from your app in less than 5 minutes!
 aliases: [getting_started]
-# prettier-ignore
-cSpell:ignore: darwin rolldice sinatra struct Tracestate tracestate truffleruby
 weight: 10
+cSpell:ignore: darwin rolldice sinatra struct tracestate truffleruby
 ---
 
 This page will show you how to get started with OpenTelemetry in Ruby.
@@ -16,7 +15,7 @@ You will learn how you can instrument a simple application, in such a way that
 
 Ensure that you have the following installed locally:
 
-- MRI Ruby >= `3.0`, jruby >= `9.3.2.0`, or truffleruby >= 22.1
+- CRuby >= `3.0`, JRuby >= `9.3.2.0`, or TruffleRuby >= `22.1`
 - [Bundler](https://bundler.io/)
 
 {{% alert  title="Warning" color="warning" %}} While tested, support for `jruby`
@@ -34,7 +33,7 @@ For more elaborate examples, see [examples](/docs/languages/ruby/examples/).
 
 ### Dependencies
 
-To begin, install rails:
+To begin, install Rails:
 
 ```sh
 gem install rails
@@ -62,7 +61,7 @@ file in your preferred editor and update it with the following code:
 ```ruby
 class DiceController < ApplicationController
   def roll
-    render json: (rand(6) + 1).to_s
+    render json: rand(1..6).to_s
   end
 end
 ```

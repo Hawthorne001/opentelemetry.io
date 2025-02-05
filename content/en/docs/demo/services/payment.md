@@ -6,10 +6,10 @@ cSpell:ignore: nanos
 ---
 
 This service is responsible to process credit card payments for orders. It will
-return an error if the credit card is invalid or the payment can not be
+return an error if the credit card is invalid or the payment cannot be
 processed.
 
-[Payment service source](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/paymentservice/)
+[Payment service source](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/payment/)
 
 ## Initializing OpenTelemetry
 
@@ -87,7 +87,7 @@ You can then use `opentelemetry.js` to start your app. This can be done in the
 `ENTRYPOINT` command for the service's `Dockerfile`.
 
 ```dockerfile
-ENTRYPOINT [ "node", "./opentelemetry.js" ]
+ENTRYPOINT [ "node", "--require", "./opentelemetry.js", "./index.js" ]
 ```
 
 ## Traces

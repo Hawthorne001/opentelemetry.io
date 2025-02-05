@@ -4,8 +4,8 @@ aliases:
   - /docs/languages/js/api/tracing
   - manual
 weight: 30
-cSpell:ignore: dicelib Millis rolldice
 description: Instrumentation for OpenTelemetry JavaScript
+cSpell:ignore: dicelib Millis rolldice
 ---
 
 {{% docs/languages/instrumentation-intro %}}
@@ -14,8 +14,8 @@ description: Instrumentation for OpenTelemetry JavaScript
 
 On this page you will learn how you can add traces, metrics and logs to your
 code _manually_. But, you are not limited to only use one kind of
-instrumentation: use [automatic instrumentation](/docs/languages/js/automatic/)
-to get started and then enrich your code with manual instrumentation as needed.
+instrumentation: use [automatic instrumentation](/docs/zero-code/js/) to get
+started and then enrich your code with manual instrumentation as needed.
 
 Also, for libraries your code depends on, you don't have to write
 instrumentation code yourself, since they might come with OpenTelemetry built-in
@@ -75,7 +75,7 @@ TypeScript) and add the following code to it:
 ```ts
 /*dice.ts*/
 function rollOnce(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export function rollTheDice(rolls: number, min: number, max: number) {
@@ -92,7 +92,7 @@ export function rollTheDice(rolls: number, min: number, max: number) {
 ```js
 /*dice.js*/
 function rollOnce(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function rollTheDice(rolls, min, max) {
@@ -115,7 +115,7 @@ add the following code to it:
 
 ```ts
 /*app.ts*/
-import express, { Request, Express } from 'express';
+import express, { Express } from 'express';
 import { rollTheDice } from './dice';
 
 const PORT: number = parseInt(process.env.PORT || '8080');
@@ -223,14 +223,14 @@ import {
 } from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
 import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
 
 const sdk = new NodeSDK({
   resource: new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: 'yourServiceName',
-    [SEMRESATTRS_SERVICE_VERSION]: '1.0',
+    [ATTR_SERVICE_NAME]: 'yourServiceName',
+    [ATTR_SERVICE_VERSION]: '1.0',
   }),
   traceExporter: new ConsoleSpanExporter(),
   metricReader: new PeriodicExportingMetricReader({
@@ -253,14 +253,14 @@ const {
 } = require('@opentelemetry/sdk-metrics');
 const { Resource } = require('@opentelemetry/resources');
 const {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
 } = require('@opentelemetry/semantic-conventions');
 
 const sdk = new NodeSDK({
   resource: new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: 'dice-server',
-    [SEMRESATTRS_SERVICE_VERSION]: '0.1.0',
+    [ATTR_SERVICE_NAME]: 'dice-server',
+    [ATTR_SERVICE_VERSION]: '0.1.0',
   }),
   traceExporter: new ConsoleSpanExporter(),
   metricReader: new PeriodicExportingMetricReader({
@@ -336,7 +336,7 @@ above, you have a `TracerProvider` setup for you already. You can continue with
 #### Browser
 
 {{% alert title="Warning" color="warning" %}}
-{{% _param notes.browser-instrumentation %}} {{% /alert %}}
+{{% param notes.browser-instrumentation %}} {{% /alert %}}
 
 First, ensure you've got the right packages:
 
@@ -352,8 +352,8 @@ SDK initialization code in it:
 ```ts
 import { Resource } from '@opentelemetry/resources';
 import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import {
@@ -363,8 +363,8 @@ import {
 
 const resource = Resource.default().merge(
   new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: 'service-name-here',
-    [SEMRESATTRS_SERVICE_VERSION]: '0.1.0',
+    [ATTR_SERVICE_NAME]: 'service-name-here',
+    [ATTR_SERVICE_VERSION]: '0.1.0',
   }),
 );
 
@@ -384,8 +384,8 @@ provider.register();
 const opentelemetry = require('@opentelemetry/api');
 const { Resource } = require('@opentelemetry/resources');
 const {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
 } = require('@opentelemetry/semantic-conventions');
 const { WebTracerProvider } = require('@opentelemetry/sdk-trace-web');
 const {
@@ -395,8 +395,8 @@ const {
 
 const resource = Resource.default().merge(
   new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: 'service-name-here',
-    [SEMRESATTRS_SERVICE_VERSION]: '0.1.0',
+    [ATTR_SERVICE_NAME]: 'service-name-here',
+    [ATTR_SERVICE_VERSION]: '0.1.0',
   }),
 );
 
@@ -558,7 +558,7 @@ import { trace } from '@opentelemetry/api';
 const tracer = trace.getTracer('dice-lib');
 
 function rollOnce(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export function rollTheDice(rolls: number, min: number, max: number) {
@@ -579,7 +579,7 @@ const { trace } = require('@opentelemetry/api');
 const tracer = trace.getTracer('dice-lib');
 
 function rollOnce(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function rollTheDice(rolls, min, max) {
@@ -707,7 +707,7 @@ nested operation. The following sample creates a nested span that tracks
 ```ts
 function rollOnce(i: number, min: number, max: number) {
   return tracer.startActiveSpan(`rollOnce:${i}`, (span: Span) => {
-    const result = Math.floor(Math.random() * (max - min) + min);
+    const result = Math.floor(Math.random() * (max - min + 1) + min);
     span.end();
     return result;
   });
@@ -732,7 +732,7 @@ export function rollTheDice(rolls: number, min: number, max: number) {
 ```js
 function rollOnce(i, min, max) {
   return tracer.startActiveSpan(`rollOnce:${i}`, (span) => {
-    const result = Math.floor(Math.random() * (max - min) + min);
+    const result = Math.floor(Math.random() * (max - min + 1) + min);
     span.end();
     return result;
   });
@@ -849,7 +849,7 @@ information about the current operation that it's tracking.
 ```ts
 function rollOnce(i: number, min: number, max: number) {
   return tracer.startActiveSpan(`rollOnce:${i}`, (span: Span) => {
-    const result = Math.floor(Math.random() * (max - min) + min);
+    const result = Math.floor(Math.random() * (max - min + 1) + min);
 
     // Add an attribute to the span
     span.setAttribute('dicelib.rolled', result.toString());
@@ -865,7 +865,7 @@ function rollOnce(i: number, min: number, max: number) {
 ```js
 function rollOnce(i, min, max) {
   return tracer.startActiveSpan(`rollOnce:${i}`, (span) => {
-    const result = Math.floor(Math.random() * (max - min) + min);
+    const result = Math.floor(Math.random() * (max - min + 1) + min);
 
     // Add an attribute to the span
     span.setAttribute('dicelib.rolled', result.toString());
@@ -1085,7 +1085,9 @@ import opentelemetry, { SpanStatusCode } from '@opentelemetry/api';
 try {
   doWork();
 } catch (ex) {
-  span.recordException(ex);
+  if (ex instanceof Error) {
+    span.recordException(ex);
+  }
   span.setStatus({ code: SpanStatusCode.ERROR });
 }
 ```
@@ -1100,7 +1102,9 @@ const opentelemetry = require('@opentelemetry/api');
 try {
   doWork();
 } catch (ex) {
-  span.recordException(ex);
+  if (ex instanceof Error) {
+    span.recordException(ex);
+  }
   span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR });
 }
 ```
@@ -1259,14 +1263,14 @@ import {
 } from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
 import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
 
 const resource = Resource.default().merge(
   new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: 'dice-server',
-    [SEMRESATTRS_SERVICE_VERSION]: '0.1.0',
+    [ATTR_SERVICE_NAME]: 'dice-server',
+    [ATTR_SERVICE_VERSION]: '0.1.0',
   }),
 );
 
@@ -1296,14 +1300,14 @@ const {
 } = require('@opentelemetry/sdk-metrics');
 const { Resource } = require('@opentelemetry/resources');
 const {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
 } = require('@opentelemetry/semantic-conventions');
 
 const resource = Resource.default().merge(
   new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: 'service-name-here',
-    [SEMRESATTRS_SERVICE_VERSION]: '0.1.0',
+    [ATTR_SERVICE_NAME]: 'service-name-here',
+    [ATTR_SERVICE_VERSION]: '0.1.0',
   }),
 );
 
@@ -1466,7 +1470,7 @@ const tracer = trace.getTracer('dice-lib');
 const meter = metrics.getMeter('dice-lib');
 
 function rollOnce(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export function rollTheDice(rolls: number, min: number, max: number) {
@@ -1488,7 +1492,7 @@ const tracer = trace.getTracer('dice-lib');
 const meter = metrics.getMeter('dice-lib');
 
 function rollOnce(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function rollTheDice(rolls, min, max) {
@@ -1508,7 +1512,7 @@ Now that you have [meters](/docs/concepts/signals/metrics/#meter) initialized.
 you can create
 [metric instruments](/docs/concepts/signals/metrics/#metric-instruments).
 
-### Create counters
+### Using counters
 
 Counters can be used to measure a non-negative, increasing value.
 
@@ -1523,7 +1527,7 @@ const counter = meter.createCounter('dice-lib.rolls.counter');
 
 function rollOnce(min: number, max: number) {
   counter.add(1);
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 ```
 
@@ -1535,7 +1539,7 @@ const counter = meter.createCounter('dice-lib.rolls.counter');
 
 function rollOnce(min, max) {
   counter.add(1);
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 ```
 
@@ -1615,16 +1619,16 @@ Observable counters can be used to measure an additive, non-negative,
 monotonically increasing value.
 
 ```js
-let events = [];
+const events = [];
 
 const addEvent = (name) => {
-  events = append(events, name);
+  events.push(name);
 };
 
 const counter = myMeter.createObservableCounter('events.counter');
 
 counter.addCallback((result) => {
-  result.observe(len(events));
+  result.observe(events.length);
 });
 
 //... calls to addEvent
@@ -1636,10 +1640,10 @@ Observable UpDown counters can increment and decrement, allowing you to measure
 an additive, non-negative, non-monotonically increasing cumulative value.
 
 ```js
-let events = [];
+const events = [];
 
 const addEvent = (name) => {
-  events = append(events, name);
+  events.push(name);
 };
 
 const removeEvent = () => {
@@ -1649,7 +1653,7 @@ const removeEvent = () => {
 const counter = myMeter.createObservableUpDownCounter('events.counter');
 
 counter.addCallback((result) => {
-  result.observe(len(events));
+  result.observe(events.length);
 });
 
 //... calls to addEvent and removeEvent

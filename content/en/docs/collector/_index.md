@@ -1,10 +1,10 @@
 ---
 title: Collector
 description: Vendor-agnostic way to receive, process and export telemetry data.
-aliases: [collector/about]
+aliases: [./about]
 cascade:
-  vers: 0.99.0
-weight: 10
+  vers: 0.118.0
+weight: 270
 ---
 
 ![OpenTelemetry Collector diagram with Jaeger, OTLP and Prometheus integration](img/otel-collector.svg)
@@ -28,7 +28,7 @@ export their telemetry data.
 - _Observability_: An exemplar of an observable service.
 - _Extensibility_: Customizable without touching the core code.
 - _Unification_: Single codebase, deployable as an agent or collector with
-  support for traces, metrics, and logs (future).
+  support for traces, metrics, and logs.
 
 ## When to use a collector
 
@@ -52,18 +52,31 @@ It is also easier to [setup a collector](quick-start) than you might think: the
 default OTLP exporters in each language assume a local collector endpoint, so if
 you launch a collector it will automatically start receiving telemetry.
 
+## Collector security
+
+Follow best practices to make sure your collectors are [hosted] and [configured]
+securely.
+
 ## Status and releases
 
-The **collector** status is: [mixed][], since core collector components
+The **Collector** status is: [mixed][], since core Collector components
 currently have mixed [stability levels][].
 
 **Collector components** differ in their maturity levels. Each component has its
 stability documented in its `README.md`. You can find a list of all available
-collector components in the [registry][].
+Collector components in the [registry][].
+
+Support is guaranteed for Collector software artifacts for a certain time period
+based on the artifact's intended audience. This support includes, at minimum,
+fixes for critical bugs and security issues. See the
+[support policies](https://github.com/open-telemetry/opentelemetry-collector/blob/main/VERSIONING.md)
+for more details.
 
 {{% docs/latest-release collector-releases /%}}
 
 [registry]: /ecosystem/registry/?language=collector
+[hosted]: /docs/security/hosting-best-practices/
+[configured]: /docs/security/config-best-practices/
 [mixed]: /docs/specs/otel/document-status/#mixed
 [stability levels]:
   https://github.com/open-telemetry/opentelemetry-collector#stability-levels

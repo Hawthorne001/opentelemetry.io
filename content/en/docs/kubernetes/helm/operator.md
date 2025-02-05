@@ -22,8 +22,9 @@ following commands:
 ```console
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm install my-opentelemetry-operator open-telemetry/opentelemetry-operator \
+  --set "manager.collectorImage.repository=otel/opentelemetry-collector-k8s" \
   --set admissionWebhooks.certManager.enabled=false \
-  --set admissionWebhooks.certManager.autoGenerateCert.enabled=true
+  --set admissionWebhooks.autoGenerateCert.enabled=true
 ```
 
 This will install an OpenTelemetry Operator with a self-signed certificate and
@@ -62,8 +63,8 @@ generate/configure the required TLS certificate.
   `.Values.admissionWebhooks.create` and `admissionWebhooks.certManager.enabled`
   while setting your custom cert secret name in `admissionWebhooks.secretName`
 - You can disable webhooks all together by disabling
-  `.Values.admissionWebhooks.create` and setting env var to
-  `ENABLE_WEBHOOKS: "false"`
+  `.Values.admissionWebhooks.create` and setting env var
+  `.Values.manager.env.ENABLE_WEBHOOKS` to `false`
 
 All the configuration options (with comments) available in the chart can be
 viewed in its

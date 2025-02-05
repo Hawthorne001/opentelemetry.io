@@ -1,8 +1,11 @@
 ---
-title: Getting Started
+title: Getting Started by Example
 description: Get telemetry for your app in less than 5 minutes!
 weight: 10
 ---
+
+<!-- markdownlint-disable blanks-around-fences -->
+<?code-excerpt path-base="examples/java/getting-started"?>
 
 This page will show you how to get started with OpenTelemetry in Java.
 
@@ -24,7 +27,7 @@ another web framework, such as Apache Wicket or Play. For a complete list of
 libraries and supported frameworks, consult the
 [registry](/ecosystem/registry/?component=instrumentation&language=java).
 
-For more elaborate examples, see [examples](/docs/languages/java/examples/).
+For more elaborate examples, see [examples](../examples/).
 
 ### Dependencies
 
@@ -59,11 +62,13 @@ dependencies {
 In that same folder, create a file called `DiceApplication.java` and add the
 following code to the file:
 
+<!-- prettier-ignore-start -->
+<?code-excerpt "src/main/java/otel/DiceApplication.java"?>
 ```java
 package otel;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
@@ -75,10 +80,13 @@ public class DiceApplication {
   }
 }
 ```
+<!-- prettier-ignore-end -->
 
 Create another file called `RollController.java` and add the following code to
 the file:
 
+<!-- prettier-ignore-start -->
+<?code-excerpt "src/main/java/otel/RollController.java"?>
 ```java
 package otel;
 
@@ -110,6 +118,7 @@ public class RollController {
   }
 }
 ```
+<!-- prettier-ignore-end -->
 
 Build and run the application with the following command, then open
 <http://localhost:8080/rolldice> in your web browser to ensure it is working.
@@ -121,9 +130,9 @@ java -jar ./build/libs/java-simple.jar
 
 ## Instrumentation
 
-Next, you'll use a [Java agent to automatically instrument](../automatic) the
-application at launch time. While you can [configure the Java agent][] in a
-number of ways, the steps below use environment variables.
+Next, you'll use a [Java agent](/docs/zero-code/java/agent/) to automatically
+instrument the application at launch time. While you can [configure the Java
+agent][] in a number of ways, the steps below use environment variables.
 
 1. Download [opentelemetry-javaagent.jar][] from [Releases][] of the
    `opentelemetry-java-instrumentation` repository. The JAR file contains the
@@ -237,10 +246,11 @@ value=8192, exemplars=[]}], monotonic=false, aggregationTemporality=CUMULATIVE}}
 For more:
 
 - Run this example with another [exporter][] for telemetry data.
-- Try [automatic instrumentation](../automatic/) on one of your own apps.
+- Try [zero-code instrumentation](/docs/zero-code/java/agent/) on one of your
+  own apps.
 - For light-weight customized telemetry, try [annotations][].
 - Learn about [manual instrumentation][] and try out more
-  [examples](/docs/languages/java/examples/).
+  [examples](../examples/).
 - Take a look at the [OpenTelemetry Demo](/docs/demo/), which includes Java
   based [Ad Service](/docs/demo/services/ad/) and Kotlin based
   [Fraud Detection Service](/docs/demo/services/fraud-detection/)
@@ -248,8 +258,8 @@ For more:
 [traces]: /docs/concepts/signals/traces/
 [metrics]: /docs/concepts/signals/metrics/
 [logs]: /docs/concepts/signals/logs/
-[annotations]: ../automatic/annotations/
-[configure the java agent]: ../automatic/#configuring-the-agent
+[annotations]: /docs/zero-code/java/agent/annotations/
+[configure the java agent]: /docs/zero-code/java/agent/configuration/
 [console exporter]:
   https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md#logging-exporter
 [exporter]:
