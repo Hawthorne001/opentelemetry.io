@@ -9,14 +9,13 @@ on:
 jobs:
   auto-update-versions:
     name: Auto-update versions
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     if: github.repository == 'open-telemetry/opentelemetry.io'
     env:
-      DEPTH: --depth 500 # submodule clone depth
+      DEPTH: --depth 999 # submodule clone depth
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Use CLA approved github bot
         run: |

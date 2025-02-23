@@ -1,6 +1,7 @@
 name: Linter
 
 on:
+  merge_group:
   pull_request:
 
 jobs:
@@ -33,7 +34,7 @@ jobs:
         run: |
           mkdir -p tmp
           jq '.devDependencies |= with_entries(
-                  select(.key | test("gulp|markdown|through|require|yargs"))
+                  select(.key | test("gulp|markdown|through|require|yargs|js-yaml|ajv|ajv-formats|ajv-errors"))
                 )
                 | del(.dependencies, .optionalDependencies)' \
             package.json > tmp/package-ci.json
@@ -45,3 +46,4 @@ jobs:
           cache-dependency-path: tmp/package-ci.json
       - run: npm install --ignore-scripts --omit=optional
       - run: npm run check:markdown
+      - run: npm run check:markdown2

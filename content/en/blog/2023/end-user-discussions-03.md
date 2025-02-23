@@ -154,8 +154,8 @@ Additional suggestions:
 
 - Start with dev or testing environments first to build trust in the software
 - Choose a stack where OTel is more robust, such as Java and Node.js
-- For countering developer resistance, using auto-instrumentation modules to
-- start with is a good step
+- For countering developer resistance, using automatic instrumentation to start
+  with is a good step
 
 #### 2 - Starting and scaling
 
@@ -190,9 +190,8 @@ agent to the host metrics receiver for infrastructure monitoring.
   maturing in OTel; for example, the Java JAR agent takes care of instrumenting
   [most libraries](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/supported-libraries.md#libraries--frameworks)
   that are used by applications. Auto-instrumentation is also available for
-  [Python](/docs/languages/python/automatic/),
-  [.NET](/docs/languages/net/automatic/), and
-  [Node.js](/docs/languages/js/automatic).
+  [Python](/docs/zero-code/python/), [.NET](/docs/zero-code/net/), and
+  [Node.js](/docs/zero-code/js/).
 - If you’re using Kubernetes, they can use the
   [OTel operator](https://github.com/open-telemetry/opentelemetry-operator),
   which takes care of instrumentations for applications deployed on K8s. The

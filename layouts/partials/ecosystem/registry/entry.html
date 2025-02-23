@@ -1,16 +1,17 @@
 {{ $languageNames := .languageNames -}}
+{{ $registryUrl := .registryUrl -}}
 
 {{ with .value -}}
-    {{ 
+    {{
         $remoteRegistries := dict
-            "npm" (dict 
+            "npm" (dict
                 "urlPattern" "https://npmjs.com/package/%s"
                 "installTemplate" "ecosystem/registry/quickinstall/default.md"
                 "installLine" "npm install %s"
                 "icon" "fab fa-npm")
             "packagist" (dict
                 "urlPattern" "https://packagist.org/packages/%s"
-                "installLine" "composer install %s"
+                "installLine" "composer require %s"
                 "installTemplate" "ecosystem/registry/quickinstall/default.md"
                 "icon" "fa-solid fa-box-open")
             "gems" (dict
@@ -46,10 +47,14 @@
                 "installLine" "cargo add %s"
                 "installTemplate" "ecosystem/registry/quickinstall/default.md"
                 "icon" "fab fa-rust")
+            "maven" (dict
+                "urlPattern" "https://maven.org/artifact/%s"
+                "installTemplate" "ecosystem/registry/quickinstall/maven.md"
+                "icon" "fa-solid fa-feather")
     -}}
 
-    {{ $isNativ := and (eq .registryType "instrumentation") (.isNative) }}
-    {{ $isFirstParty := and (eq .registryType "instrumentation") (.isFirstParty) }}
+    {{ $isNative := and (or (eq .registryType "instrumentation") (eq .registryType "application integration")) (.isNative) }}
+    {{ $isFirstParty := and (or (eq .registryType "instrumentation") (eq .registryType "application integration")) (.isFirstParty) }}
     {{ $currentTime := (time now) -}}
     {{ $delta := $currentTime.Sub (time.AsTime .createdAt) -}}
     {{ $isNew := lt $delta.Hours 730 -}}
@@ -60,11 +65,11 @@
         {{ $package = merge .package (index $remoteRegistries .package.registry) -}}
         {{ $package = merge $package (dict "type" .registryType) -}}
     {{ end -}}
-    {{ $highlightStyle := "" -}}
+    {{ $highlightStyle := "border-default" -}}
     {{ if $isNew -}}
         {{ $highlightStyle = "border-info" -}}
     {{ end -}}
-    {{ if $isNativ -}}
+    {{ if $isNative -}}
         {{ $highlightStyle = "border-success" -}}
     {{ end -}}
     {{ if $isFirstParty -}}
@@ -76,34 +81,66 @@
     {{ if $deprecated -}}
         {{ $highlightStyle = "border-danger" -}}
     {{ end -}}
-    {{ $repoHref := printf "href=%q" .urls.repo | safeHTMLAttr -}}
-    <li class="card my-3 registry-entry {{ $highlightStyle }}" data-registry-id="{{ ._key }}" data-registrytype="{{ .registryType }}" data-registrylanguage="{{ .language }}">
+    {{ $primaryUrl := "" -}}
+    {{ if .urls.repo -}}
+        {{ $primaryUrl = .urls.repo -}}
+    {{ else if .urls.website -}}
+        {{ $primaryUrl = .urls.website -}}
+    {{ else if .urls.docs -}}
+    {{ errorf "The %q registry entry requires a repo or website URL." .title }}
+    {{ end -}}
+    {{ $primaryHref := printf "href=%q" $primaryUrl | safeHTMLAttr -}}
+    {{ $flags := slice -}} <!-- Initialize flags slice -->
+    {{ if $isNew -}}  <!-- Check if the entry is new -->
+    {{ $flags = $flags | append "new" -}}
+    {{ end -}}
+    {{ if $isNative -}}
+        {{ $flags = $flags | append "native" -}}
+    {{ end -}}
+    {{ if $isFirstParty -}}
+        {{ $flags = $flags | append "first_party" -}}
+    {{ end -}}
+    {{ if $usedInDemo -}}  <!-- Check if the entry was used in a demo -->
+    {{ $flags = $flags | append "used_in_demo" -}}
+    {{ end -}}
+    {{ if $deprecated -}}
+        {{ $flags = $flags | append "deprecated" -}}
+    {{ end -}}
+    <li class="card my-3 registry-entry {{ $highlightStyle }}" data-registry-id="{{ ._key }}" data-registrytype="{{ .registryType }}" data-registrylanguage="{{ .language }}"   data-registryflags="{{- range $index, $flag := $flags -}}{{ if $index }} {{ end }}{{ $flag }}{{- end }}">
         <div class="card-body container">
         <h4 class="card-title mb-0 d-flex flex-row">
-            <a {{ $repoHref }} target="_blank" rel="noopener" class="me-auto">
+            <a {{ $primaryHref }} target="_blank" rel="noopener" class="me-auto">
             {{- .title | markdownify -}}
             </a>
             <div class="ms-auto">
             {{ if $isNew -}}
             <span class="badge rounded-pill text-bg-info"><i class="fa-regular fa-star"></i> new</span>
             {{ end -}}
-            {{ if $isNativ -}}
-            <span class="badge rounded-pill text-bg-success text-white"><i class="fa-solid fa-puzzle-piece"></i> native</span>
+            {{ if $isNative -}}
+            <a href="{{ $registryUrl }}/?flag=native" class="badge rounded-pill text-bg-success text-white" title="Click to filter by native flag">
+            <i class="fa-solid fa-puzzle-piece"></i> native</a>
             {{ end -}}
             {{ if $isFirstParty -}}
-            <span class="badge rounded-pill text-bg-success text-white"><i class="fa-solid fa-heart"></i> first party integration</span>
+            <a href="{{ $registryUrl }}/?flag=first_party" class="badge rounded-pill text-bg-success text-white" title="Click to filter by first party flag">
+            <i class="fa-solid fa-heart"></i> first party integration</a>
             {{ end -}}
             {{ if $usedInDemo -}}
             <span class="badge rounded-pill text-bg-secondary text-white" title="This package is used in the OpenTelemetry Demo!"><i class="fa-solid fa-shapes"></i> OTel Demo</span>
             {{ end -}}
             {{ if $deprecated -}}
-            <span class="badge rounded-pill text-bg-danger text-white" title=""><i class="fa-solid fa-ban"></i> deprecated</span>
+            <a href="{{ $registryUrl }}/?flag=deprecated" class="badge rounded-pill text-bg-danger text-white" title="Click to filter by deprecated flag">
+            <i class="fa-solid fa-ban"></i> deprecated</a>
+            {{ end -}}
+            {{ if .cncfProjectLevel -}}
+            <span class="badge rounded-pill text-bg-primary text-white" title="CNCF {{ .cncfProjectLevel}} Project">
+                <img alt="CNCF" style="display: inline-block; width: 14px; height: 14px; border: none; margin:0px; padding: 0; vertical-align:middle" src="/img/cncf-icon-white.svg"> {{ .cncfProjectLevel }}
+            </span>
             {{ end -}}
             </div>
         </h4>
         <p class="card-text">
             <small class="text-body-secondary">
-            by 
+            by
             {{ range $index, $author := .authors -}}
                 {{ if $index }}, {{ end }}
                 {{ if eq $author.name "OpenTelemetry Authors" -}}
@@ -128,6 +165,19 @@
                     {{ end -}}
                     {{- .description | markdownify -}}
                 </div>
+
+                <!-- New Tags section -->
+                <div class="tags mb-2">
+                    {{ if .tags }}
+                        <div>
+                            {{ range .tags }}
+                                {{ $tag := . }} <!-- Store the tag in a variable -->
+                                <a href="{{ $registryUrl }}/?s={{ $tag | urlize }}" class="badge bg-light me-1">{{ $tag }}</a>
+                            {{ end }}
+                        </div>
+                    {{ end }}
+                </div>
+
                 {{ with $package -}}
                     {{ if not (eq .quickInstall false) }}
                     <h6><i class="fa-solid fa-forward"></i> Quick Install</h6>
@@ -145,7 +195,7 @@
                     {{ .package.version }}
                 </div>
                 <small>Version</small>
-                </div>      
+                </div>
             </li>
             {{- end -}}
             {{ with .language -}}
@@ -155,7 +205,7 @@
                     {{ $languageNames.Get . | default (humanize .) }}
                 </div>
                 <small>Language</small>
-                </div>      
+                </div>
             </li>
             {{- end }}
             {{ with .registryType -}}
@@ -165,7 +215,7 @@
                     {{ . | humanize }}
                 </div>
                 <small>Component</small>
-                </div>      
+                </div>
             </li>
             {{- end -}}
             {{ with .license -}}
@@ -175,7 +225,7 @@
                     {{ . }}
                 </div>
                 <small>License</small>
-                </div>      
+                </div>
             </li>
             {{- end -}}
             </div>
@@ -183,9 +233,9 @@
         <div>
 
         </div>
-        {{ with .urls.homepage -}}
-        {{ $homepageHref := printf "href=%q" . | safeHTMLAttr -}}
-        <a {{ $homepageHref }} target="_blank" rel="noopener" class="card-link">Homepage</a>
+        {{ with .urls.website -}}
+        {{ $websiteHref := printf "href=%q" . | safeHTMLAttr -}}
+        <a {{ $websiteHref }} target="_blank" rel="noopener" class="card-link"><i class="fas fa-house" aria-hidden="true"></i>&nbsp;Website</a>
         {{- end -}}
         {{ with .urls.docs -}}
         {{ $docsHref := printf "href=%q" . | safeHTMLAttr -}}
@@ -197,6 +247,7 @@
         {{- end -}}
         {{ with .urls.repo -}}
         {{ $icon := cond ( hasPrefix . "https://github.com/" ) "fa-brands fa-github" "fab fa-git-alt" -}}
+        {{ $repoHref := printf "href=%q" . | safeHTMLAttr -}}
         <a {{ $repoHref }} target="_blank" rel="noopener" class="card-link"><i class="{{ $icon }}" aria-hidden="true"></i>&nbsp;Repository</a>
         {{- end -}}
         {{ with .urls.demo -}}

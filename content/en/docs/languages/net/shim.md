@@ -108,9 +108,9 @@ corresponding to the service is injected during setup. This lets you get access
 to an instance in your endpoint mapping (or controllers if you're using an older
 version of .NET).
 
-It's not required to inject a service-level tracer, nor does it improve
-performance either. You will need to decide where you'll want your tracer
-instance to live, though.
+It isn't required to inject a service-level tracer and it doesn't improve
+performance. You will need to decide where you'll want your tracer instance to
+live, though.
 
 This is also where you can configure instrumentation libraries.
 
@@ -371,8 +371,8 @@ using var span = tracer.StartActiveSpan("another-span", links: links);
 
 A [status](/docs/concepts/signals/traces/#span-status) can be set on a span,
 typically used to specify that a span has not completed successfully -
-`Status.Error`. In rare scenarios, you could override the `Error` status with
-`Ok`, but don't set `Ok` on successfully-completed spans.
+`StatusCode.Error`. In rare scenarios, you could override the `Error` status
+with `Ok`, but don't set `Ok` on successfully-completed spans.
 
 The status can be set at any time before the span is finished:
 
@@ -385,7 +385,7 @@ try
 }
 catch (Exception ex)
 {
-    span.SetStatus(Status.Error, "Something bad happened!");
+    span.SetStatus(new(StatusCode.Error, "Something bad happened!"));
 }
 ```
 
@@ -403,7 +403,7 @@ try
 }
 catch (Exception ex)
 {
-    span.SetStatus(Status.Error, "Something bad happened!");
+    span.SetStatus(new(StatusCode.Error, "Something bad happened!"));
     span.RecordException(ex)
 }
 ```

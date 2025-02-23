@@ -6,7 +6,6 @@ linkTitle: Tail Sampling
 date: 2022-09-26
 author: '[Reese Lee](https://github.com/reese-lee)'
 canonical_url: https://newrelic.com/blog/best-practices/open-telemetry-tail-sampling
-cSpell:ignore: unsampled
 ---
 
 Tail sampling is useful for identifying issues in your distributed system while
@@ -228,4 +227,4 @@ for more information.
 
 _A version of this article was [originally posted][] on the New Relic blog._
 
-[originally posted]: {{% param canonical_url %}}
+[originally posted]: <{{% param canonical_url %}}>

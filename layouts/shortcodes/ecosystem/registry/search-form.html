@@ -1,4 +1,5 @@
 {{ $registry := .Site.Data.registry -}}
+{{ $registryUrl := .Page.RelPermalink -}}
 
 {{ $languageNames := newScratch -}}
 {{ $languageNames.Set "cpp" "C++" -}}
@@ -8,14 +9,13 @@
 
 {{ $officialLanguages := slice "collector" "cpp" "erlang" "elixir" "dotnet" "go" "java" "js" "php" "python" "ruby" "rust" "swift" -}}
 
-
 {{ $langs := slice -}}
 {{ range $registry -}}
   {{ $language := .language -}}
   {{- $val := (dict
     "name" .language
     "isOfficial" (in $officialLanguages .language)
-    ) 
+    )
   -}}
   {{ $langs = $langs | append $val -}}
   {{ if ne $language (lower $language) -}}
@@ -34,14 +34,40 @@
 {{ end -}}
 {{ $types = $types | uniq | sort -}}
 
-<div class="alert alert-info">
-The OpenTelemetry Registry allows you to search for instrumentation libraries,
-collector components, utilities, and other useful projects in the OpenTelemetry
-ecosystem. If you are a project maintainer, you can <a href="/ecosystem/registry/adding/">add your project to the OpenTelemetry Registry</a>
-</div>
+{{ $counter := 0 -}}
+{{ $entries := slice -}}
+{{ range $key, $entry := .Site.Data.registry -}}
+  {{ $flags := slice -}}
+  {{ if .isNative -}}
+    {{ $flags = $flags | append "native" -}}
+  {{ end -}}
+  {{ if .isFirstParty -}}
+    {{ $flags = $flags | append "first_party" -}}
+  {{ end -}}
+  {{ if .isNew -}}
+    {{ $flags = $flags | append "new" -}}
+  {{ end -}}
+  {{ if .usedInDemo -}}
+    {{ $flags = $flags | append "used_in_demo" -}}
+  {{ end -}}
+  {{ if .deprecated -}}
+    {{ $flags = $flags | append "deprecated" -}}
+  {{ end -}}
+  {{ $entry = merge $entry (dict "_key" $key "id" $counter "flags" $flags) -}}
+  {{ $entries = $entries | append $entry -}}
+  {{ $counter = add $counter 1 }}
+{{ end -}}
+
+{{ $allFlags := slice -}}
+{{ range $entry := $entries -}}
+  {{ range $flag := $entry.flags -}}
+    {{ $allFlags = $allFlags | append $flag }}
+  {{ end -}}
+{{ end -}}
+{{ $uniqueFlags := $allFlags | uniq | sort }}
 
 <div class="pb-4">
-  <form action="/ecosystem/registry" id="searchForm">
+  <form action="{{ $registryUrl }}" id="searchForm">
     <div class="input-group">
       <span class="input-group-text" id="basic-addon1" title="{{ len $registry }} entries">Search {{ len $registry }} entries</span>
       <input class="form-control w-auto" list="search-suggestions" id="input-s" type="text" name="s" placeholder="Type to search…"
@@ -51,6 +77,8 @@ ecosystem. If you are a project maintainer, you can <a href="/ecosystem/registry
 
       <input type="hidden" name="component" id="input-component" value="" />
       <input type="hidden" name="language" id="input-language" value="" />
+      <input type="hidden" name="flag" id="input-flag" value="all" />
+
 
       <button type="button" class="btn btn-outline-success"
         onclick="document.getElementById('searchForm').submit();">Submit</button>
@@ -88,6 +116,16 @@ ecosystem. If you are a project maintainer, you can <a href="/ecosystem/registry
         {{ end -}}
       </div>
 
+      <!-- Flags Filter Dropdown -->
+    <button class="btn btn-outline-secondary dropdown-toggle" id="flagsDropdown" type="button"
+    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Flags</button>
+    <div class="dropdown-menu" id="flagsFilter">
+    <a value="all" class="dropdown-item">Any Flag</a>
+    {{ range $flag := $uniqueFlags -}}
+    <a value="{{ $flag }}" id="flag-item-{{ $flag }}" class="dropdown-item">{{ humanize $flag }}</a>
+    {{ end -}}
+    </div>
+
     </div>
   </form>
 </div>
@@ -101,10 +139,15 @@ ecosystem. If you are a project maintainer, you can <a href="/ecosystem/registry
   <ul class="list-unstyled" id="default-body">
     {{ range $key, $value := $registry -}}
       {{ $value = merge $value (dict "_key" $key) -}}
-      {{ partial "ecosystem/registry/entry" (dict "value" $value "languageNames" $languageNames) }}
+      {{ partial "ecosystem/registry/entry"
+          (dict
+            "registryUrl" $registryUrl
+            "value" $value
+            "languageNames" $languageNames
+          ) -}}
     {{ end -}}
   </ul>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/minisearch@6.3.0/dist/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@7.1.0/dist/umd/index.min.js" integrity="sha384-58p1D2xuw/76VRFUgDMRcrtnJAW5LWLE02ihn8aITu65c4vgo+BLy7raRKNC7KaL" crossorigin="anonymous"></script>
 {{ partial "script.html" (dict "src" "js/registrySearch.js") -}}

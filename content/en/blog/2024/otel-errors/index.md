@@ -5,8 +5,8 @@ date: 2024-04-19
 author: >-
   [Reese Lee](https://github.com/reese-lee) (New Relic),  [Adriana
   Villela](https://github.com/avillela) (ServiceNow)
-cSpell:ignore: Dalle
 canonical_url: https://newrelic.com/blog/how-to-relic/dude-wheres-my-error
+cSpell:ignore: Dalle
 ---
 
 ![A confused penguin trying to learn about errors and exceptions. Image generated with AI using Dalle3 via Bing Copilot](penguin-chalkboard.jpg)
@@ -137,10 +137,6 @@ A [span event](/docs/concepts/signals/traces/#span-events) is a structured log
 message embedded within a span. Span events help enhance spans by providing
 descriptive information about a span.
 [Span events can also have attributes of their own](/docs/languages/ruby/instrumentation/#add-span-events).
-
-When a span status is set to `Error`, a span event is created automatically,
-capturing the span’s resulting error message and stack trace as an event on that
-span. You can further enhance this span error by adding attributes to it.
 
 Earlier, we mentioned a method called `RecordException`. Per
 [the spec](/docs/specs/otel/trace/api/#record-exception) (emphasis our own), “To

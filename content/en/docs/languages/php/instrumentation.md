@@ -8,7 +8,7 @@ cSpell:ignore: guzzlehttp myapp
 
 <!-- markdownlint-disable no-duplicate-heading -->
 
-{{% docs/languages/instrumentation-intro %}}
+{{% include instrumentation-intro.md %}}
 
 ## Example app preparation {#example-app}
 
@@ -186,7 +186,7 @@ $resource = ResourceInfoFactory::emptyResource()->merge(ResourceInfo::create(Att
     ResourceAttributes::SERVICE_NAMESPACE => 'demo',
     ResourceAttributes::SERVICE_NAME => 'test-application',
     ResourceAttributes::SERVICE_VERSION => '0.1',
-    ResourceAttributes::DEPLOYMENT_ENVIRONMENT => 'development',
+    ResourceAttributes::DEPLOYMENT_ENVIRONMENT_NAME => 'development',
 ])));
 $spanExporter = new SpanExporter(
     (new StreamTransportFactory())->create('php://stdout', 'application/json')
@@ -262,7 +262,7 @@ encouraged, attribute `service.version`, which holds the version of the service
 API or implementation.
 
 Alternative methods exist for setting up resource attributes. For more
-information, see [Resources](/docs/languages/js/resources/).
+information, see [Resources](/docs/languages/php/resources/).
 
 #### Global Providers
 
@@ -404,7 +404,7 @@ class Dice {
 
     private function rollOnce() {
       $result = random_int(1, 6);
-      return $result
+      return $result;
     }
 }
 ```
@@ -690,7 +690,7 @@ See [Exporters](/docs/languages/php/exporters)
 OpenTelemetry can be used to measure and record different types of metrics from
 an application, which can then be
 [pushed](/docs/specs/otel/metrics/sdk/#push-metric-exporter) to a metrics
-service such as the OpenTelemetry collector:
+service such as the OpenTelemetry Collector:
 
 - counter
 - async counter

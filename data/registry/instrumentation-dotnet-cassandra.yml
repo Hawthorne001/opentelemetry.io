@@ -13,7 +13,8 @@ authors:
 urls:
   repo: https://github.com/open-telemetry/opentelemetry-dotnet-contrib/tree/main/src/OpenTelemetry.Instrumentation.Cassandra
 createdAt: 2022-10-28
+isFirstParty: false
 package:
   registry: nuget
   name: OpenTelemetry.Instrumentation.Cassandra
-  version: 1.0.0-beta.1
+  version: 1.0.0-beta.2

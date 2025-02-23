@@ -24,8 +24,8 @@ repository that supports this protocol. This protocol, designed to complement
 the OTLP protocol in situations with substantial telemetry data volumes, has
 been under discussion and development for two years. It represents a
 collaborative effort between [F5](https://f5.com),
-[ServiceNow Cloud Observability](https://www.servicenow.com/products/observability.html)
-, and numerous technical leaders from the OpenTelemetry community (see
+[ServiceNow Cloud Observability](https://www.servicenow.com/products/observability.html),
+and numerous technical leaders from the OpenTelemetry community (see
 [donation](https://github.com/open-telemetry/community/issues/1332)). The
 compression benefits are significant, demonstrating a **40% improvement
 compression efficiency** for the majority of workloads and even greater
@@ -140,7 +140,7 @@ aligning OpenTelemetry more closely with modern data pipelines that are
 increasingly pivoting towards Apache Arrow.
 
 A specification for this protocol (OTEP 0156) can be found
-[here](https://github.com/open-telemetry/oteps/blob/main/text/0156-columnar-encoding.md).
+[here](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/0156-columnar-encoding.md).
 A reference implementation of the encoding/decoding function can be accessed
 [here](https://github.com/open-telemetry/otel-arrow).
 
@@ -269,7 +269,7 @@ invaluable assistance.
 ## Links
 
 - OpenTelemetry Protocol with Apache Arrow Specification -
-  [OTEP 0156](https://github.com/open-telemetry/oteps/blob/main/text/0156-columnar-encoding.md)
+  [OTEP 0156](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/0156-columnar-encoding.md)
 - OpenTelemetry Protocol with Apache Arrow (encoder/decoder)
   [repository](https://github.com/open-telemetry/otel-arrow).
 - Receiver

@@ -8,7 +8,7 @@ cSpell:ignore: millis ottrace textmap
 
 <!-- markdownlint-disable no-duplicate-heading -->
 
-{{% docs/languages/instrumentation-intro %}}
+{{% include instrumentation-intro.md %}}
 
 ## Setup
 
@@ -102,10 +102,6 @@ ending it when `do_work()` is finished.
 
 To use the decorator, you must have a `tracer` instance available global to your
 function declaration.
-
-If you need to add [attributes](#add-attributes-to-a-span),
-[events](#adding-events), or [links](#adding-links) then it's less convenient to
-use a decorator.
 
 ### Get the current span
 

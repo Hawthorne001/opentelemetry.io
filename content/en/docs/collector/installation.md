@@ -1,8 +1,7 @@
 ---
 title: Install the Collector
-# prettier-ignore
-cSpell:ignore: darwin dpkg GOARCH journalctl kubectl otelcorecol pprof tlsv zpages
 weight: 2
+cSpell:ignore: darwin dpkg journalctl kubectl otelcorecol pprof tlsv zpages
 ---
 
 You can deploy the OpenTelemetry Collector on a wide variety of operating
@@ -90,7 +89,7 @@ handling, `Service` configuration based on the OpenTelemetry configuration,
 automatic sidecar injection into deployments, and more.
 
 For guidance on how to use the Collector with Kubernetes, see
-[Kubernetes Getting Started](/docs/kubernetes/getting-started/).
+[Kubernetes Getting Started](/docs/platforms/kubernetes/getting-started/).
 
 ## Nomad
 
@@ -105,39 +104,6 @@ amd64/arm64/i386 systems. You can find the default configuration in
 
 > Note: `systemd` is required for automatic service configuration.
 
-### APK Installation
-
-To get started on Alpine systems run the following commands:
-
-{{< tabpane text=true >}} {{% tab AMD64 %}}
-
-```sh
-apk update
-apk add wget shadow
-wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{% param vers %}}/otelcol_{{% param vers %}}_linux_amd64.apk
-apk add --allow-untrusted otelcol_{{% param vers %}}_linux_amd64.apk
-```
-
-{{% /tab %}} {{% tab ARM64 %}}
-
-```sh
-apk update
-apk add wget shadow
-wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{% param vers %}}/otelcol_{{% param vers %}}_linux_arm64.apk
-apk add --allow-untrusted otelcol_{{% param vers %}}_linux_arm64.apk
-```
-
-{{% /tab %}} {{% tab i386 %}}
-
-```sh
-apk update
-apk add wget shadow
-wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{% param vers %}}/otelcol_{{% param vers %}}_linux_386.apk
-apk add --allow-untrusted otelcol_{{% param vers %}}_linux_386.apk
-```
-
-{{% /tab %}} {{< /tabpane >}}
-
 ### DEB Installation
 
 To get started on Debian systems run the following commands:
@@ -146,7 +112,7 @@ To get started on Debian systems run the following commands:
 
 ```sh
 sudo apt-get update
-sudo apt-get -y install wget systemctl
+sudo apt-get -y install wget
 wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{% param vers %}}/otelcol_{{% param vers %}}_linux_amd64.deb
 sudo dpkg -i otelcol_{{% param vers %}}_linux_amd64.deb
 ```
@@ -155,7 +121,7 @@ sudo dpkg -i otelcol_{{% param vers %}}_linux_amd64.deb
 
 ```sh
 sudo apt-get update
-sudo apt-get -y install wget systemctl
+sudo apt-get -y install wget
 wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{% param vers %}}/otelcol_{{% param vers %}}_linux_arm64.deb
 sudo dpkg -i otelcol_{{% param vers %}}_linux_arm64.deb
 ```
@@ -164,7 +130,7 @@ sudo dpkg -i otelcol_{{% param vers %}}_linux_arm64.deb
 
 ```sh
 sudo apt-get update
-sudo apt-get -y install wget systemctl
+sudo apt-get -y install wget
 wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{% param vers %}}/otelcol_{{% param vers %}}_linux_386.deb
 sudo dpkg -i otelcol_{{% param vers %}}_linux_386.deb
 ```
@@ -308,8 +274,8 @@ make otelcorecol
 
 [data collection]: /docs/concepts/components/#collector
 [deployment methods]: ../deployment/
-[opentelemetry helm charts]: /docs/kubernetes/helm/
-[opentelemetry operator]: /docs/kubernetes/operator/
+[opentelemetry helm charts]: /docs/platforms/kubernetes/helm/
+[opentelemetry operator]: /docs/platforms/kubernetes/operator/
 [getting started with opentelemetry on hashicorp nomad]:
   https://github.com/hashicorp/nomad-open-telemetry-getting-started
 [releases]:

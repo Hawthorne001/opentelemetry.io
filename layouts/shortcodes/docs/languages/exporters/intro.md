@@ -34,7 +34,7 @@ Specification][OTLP].
 [Jaeger]: /blog/2022/jaeger-native-otlp/
 [OTLP]: /docs/specs/otlp/
 [Prometheus]:
-  https://prometheus.io/docs/prometheus/latest/feature_flags/#otlp-receiver
+  https://prometheus.io/docs/prometheus/2.55/feature_flags/#otlp-receiver
 [vendors]: /ecosystem/vendors/
 
 [reg]: /ecosystem/registry/?component=exporter&language={{ $lang }}
@@ -46,14 +46,14 @@ them up.
 
 {{ end -}}
 
-{{ with $.Page.GetPage "automatic/configuration" }}
 {{ $l := cond (eq $lang "dotnet") "net" $lang }}
+{{ with $.Page.GetPage (print "/docs/zero-code/" $l "/configuration" ) }}
 
 <div class="alert alert-info" role="alert"><h4 class="alert-heading">Note</h4>
 
-If you use [automatic instrumentation](/docs/languages/{{ $l }}/automatic) you
-can learn how to setup exporters following the [Configuration
-Guide](/docs/languages/{{ $l }}/automatic/configuration/).
+If you use [zero-code instrumentation](/docs/zero-code/{{ $l }}), you can learn
+how to set up exporters by following the [Configuration
+Guide](/docs/zero-code/{{ $l }}/configuration/).
 
 </div>
 

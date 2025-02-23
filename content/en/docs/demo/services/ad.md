@@ -7,7 +7,7 @@ aliases: [adservice]
 This service determines appropriate ads to serve to users based on context keys.
 The ads will be for products available in the store.
 
-[Ad service source](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/adservice/)
+[Ad service source](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/ad/)
 
 ## Auto-instrumentation
 
@@ -124,4 +124,7 @@ The following auto-instrumented metrics are available for the application:
 
 ## Logs
 
-TBD
+Ad Service uses Log4J, which is automatically configured by the OTel Java agent.
+
+It includes the trace context in log records, enabling log correlation with
+traces.

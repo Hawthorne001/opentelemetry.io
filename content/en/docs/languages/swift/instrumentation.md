@@ -5,7 +5,7 @@ aliases: [manual]
 description: Instrumentation for OpenTelemetry Swift
 ---
 
-{{% docs/languages/instrumentation-intro %}}
+{{% include instrumentation-intro.md %}}
 
 ## Setup
 
@@ -77,7 +77,7 @@ operation. Spans are the building blocks of Traces. To create a span use the
 span builder associated with the tracer:
 
 ```swift
-let span =  let builder = tracer.spanBuilder(spanName: "\(name)").startSpan()
+let span = tracer.spanBuilder(spanName: "\(name)").startSpan()
 ...
 span.end()
 ```

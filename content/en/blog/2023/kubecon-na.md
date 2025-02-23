@@ -2,9 +2,9 @@
 title: Join us for OpenTelemetry Talks and Activities at KubeCon NA 2023
 linkTitle: KubeCon NA '23
 date: 2023-10-02
+author: '[Severin Neumann](https://github.com/svrnm) (Cisco)'
 # prettier-ignore
 cSpell:ignore: Anusha Aronoff Benedikt Bongartz Broadbridge Contribfest Coralogix Danielson Endo Flamegraphs Hrabovcak Itiel Itoh Jaglowski Kanal Komodor Kota Masanori Matej Mirabella Narapureddy observ Ohly Pivotto Purvi Reddy Sharone Shishi Shivanshu Shrivastava Shwartz Zitzman
-author: '[Severin Neumann](https://github.com/svrnm) (Cisco)'
 ---
 
 The OpenTelemetry project maintainers, members of the governance committee, and
@@ -79,7 +79,7 @@ OpenTelemetry maintainers in making OpenTelemetry better for everyone during the
 ## Co-located Events
 
 [Observability Day][] _fosters collaboration, discussion, and knowledge sharing
-of cloud-native observability projects_. This event will be held on November 6,
+of cloud native observability projects_. This event will be held on November 6,
 2023 from 9am - 5pm. There will be several sessions on OpenTelemetry as well.
 
 > <i class="far fa-exclamation-triangle"></i> **IMPORTANT access note**: You

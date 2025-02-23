@@ -2,6 +2,7 @@
 title: End-user resources
 linkTitle: End user
 description: Vendor-agnostic resources for OpenTelemetry users
+weight: 40
 ---
 
 Looking to connect with other OpenTelemetry end users in a vendor-agnostic
@@ -10,16 +11,15 @@ about your implementation or adoption that you'd like to share with project
 contributors, or you want to help prioritize project issues. You've come to the
 right place!
 
-- To connect with other end users and learn about upcoming events:
-  - Join the [Slack channel](slack-channel/)
-  - Join the [APAC end user discussion group](discussion-group/)
+- To connect with other end users and learn about upcoming events, join the
+  [Slack channel](slack-channel/).
 - To learn about OpenTelemetry, check out:
   - [OTel in practice](otel-in-practice/)
   - Curated content on the
     [OpenTelemetry YouTube channel](https://www.youtube.com/@otel-official)
 - To provide feedback and help prioritize issues:
   - Participate in a [direct interview/feedback session](interviews-feedback/)
-  - Take a [survey](/community/end-user/feedback-survey/)
+  - Take a [survey](feedback-survey/)
   - Join a panel discussion (more info coming soon!)
   - Vote on issues (more info coming soon!)
 
@@ -54,5 +54,5 @@ OpenTelemetry.
 **I have questions about this, who can I reach out to?**
 
 You can find members of the
-[OpenTelemetry End User SIG](https://github.com/open-telemetry/community/tree/main/working-groups/end-user)
-in [#otel-sig-end-user](https://cloud-native.slack.com/archives/C01RT3MSWGZ).
+[OpenTelemetry End User SIG](https://github.com/open-telemetry/sig-end-user) in
+[#otel-sig-end-user](https://cloud-native.slack.com/archives/C01RT3MSWGZ).

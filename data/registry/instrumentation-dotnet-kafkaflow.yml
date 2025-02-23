@@ -13,11 +13,13 @@ description:
   traces and baggage signals about Kafka messaging.
 authors:
   - name: Farfetch
+    url: https://github.com/Farfetch
 urls:
-  repo: https://github.com/Farfetch/kafkaflow/tree/master/src/KafkaFlow.OpenTelemetry
+  repo: https://github.com/Farfetch/kafkaflow
+  docs: https://farfetch.github.io/kafkaflow/docs/guides/open-telemetry
 createdAt: 2023-12-07
 isFirstParty: true
 package:
   name: KafkaFlow.OpenTelemetry
   registry: nuget
-  version: 3.0.7
+  version: 4.0.0-beta1
